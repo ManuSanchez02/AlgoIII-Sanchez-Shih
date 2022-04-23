@@ -7,10 +7,6 @@
 | Manuel Sanchez Fernandez de la Vega | 107951           | msanchezf@fi.uba.ar |
 | Ian Shih                            | 108349           | ishih@fi.uba.ar     |
 
-**Fecha de entrega**: 25/04/2022
-
-**Catedra: Leveroni**
-
 ## Sobre implementar funcionalidad
 
 *Los tests 01, 02 y 03 demuestran la funcionalidad de cómo se incrementa la cantidad de huevos de avispas a medida que los van dejando. Cuando los implementaste, ¿esos tests pasaron (los tres) de una? ¿podrías haber implementado esta funcionalidad de a partes, haciendo que pase el 01, luego el 01 y el 02 y por último el 01, 02 y 03? ¿se te ocurre cómo? Y si lograste hacerlo, ¿qué pensas de implementar esa funcionalidad de esa forma?*
