@@ -15,9 +15,9 @@ Como vimos en clase, los tests 01, 02 y 03 los implementamos de a partes. Primer
 
 ## Sobre código repetido
 
-*¿Les quedó código repetido? ¿Dónde? ¿Se animan a adivinar qué cosa del dominio les faltó representar (y por eso tienen código repetido)? Responsabilidad de dejar un huevo consumiendo otro insecto ¿Quién les quedó, en su modelo, que es el responsable de ver si hay suficientes polillas u orugas y entonces dejar un huevo? ¿el insecto (Polly, Oriana, etc) o el hábitat? ¿por qué? ¿por qué tendría sentido que fuera de la otra forma? ¿con cuál nos quedamos?*
+*¿Les quedó código repetido? ¿Dónde? ¿Se animan a adivinar qué cosa del dominio les faltó representar (y por eso tienen código repetido)? Responsabilidad de dejar un huevo consumiendo otro insecto ¿Quién les quedó, en su modelo, que es el responsable de ver si hay suficientes polillas u orugas y entonces dejar un huevo? ¿el insecto (Polly, Oriana, etc.) o el hábitat? ¿por qué? ¿por qué tendría sentido que fuera de la otra forma? ¿con cuál nos quedamos?*
 
-Nos quedó código repetido en la categoría de recursos del hábitat, ya que nos faltó representar a un recurso como idea general, ya que podrían llegar a haber más recursos en un hábitat que se comportan de forma similar. Este problema se extendió en las avispas. el código repetido entre Ornella y Oriana lo resolvimos creando a Ornella como hija de Oriana, sin embargo, no podíamos hacer lo mismo con Polly y Lara ya que su comportamiento es distinto (al consumir otro recurso) por lo que tuvimos que cambiar el método de para intentar reproducirse.
+Nos quedó código repetido en la categoría de recursos del hábitat, ya que nos faltó representar a un recurso como idea general, ya que podrían llegar a haber más recursos en un hábitat que se comportan de forma similar. Este problema se extendió en las avispas. el código repetido entre Ornella y Oriana lo resolvimos creando a Ornella como hija de Oriana. Sin embargo, no podíamos hacer lo mismo con Polly y Lara ya que su comportamiento es distinto (al consumir otro recurso) por lo que optamos por no hacerlas hijas de Oriana ya que la implementación del método cuyo mensaje comparten (`intentarReproducirse`) seria distinta.
 
 En nuestro modelo, el responsable para ver si hay suficientes polillas u orugas y dejar un huevo es la avispa, quien le envía un mensaje al hábitat diciéndole que puso un huevo. El hábitat en sí es quien mantiene un registro de cuántos huevos hay puestos y a que firma genética corresponden. Para nosotros no tiene sentido que fuera de la otra forma ya que la que se reproduce es la avispa, no el hábitat (esto es análogo a que un auto sea capaz de guardarse como JSON) por lo que quien se debería encargar de verificar las condiciones para su propia reproducción, es la avispa. En conclusión, nos quedamos con que la avispa es la encargada de verificar cuántos recursos hay disponibles en el hábitat para reproducirse.
 
@@ -25,7 +25,9 @@ En nuestro modelo, el responsable para ver si hay suficientes polillas u orugas 
 
 *Con lo que vimos en la clase del Jueves (en la parte teórica, prototipos vs clases) ¿cómo sacarían este código? Sobre la implementación ¿cómo resolvieron guardar los huevos? ¿Usaron colecciones? ¿Diccionarios? ¿Uno, varios? ¿con qué indexaban? Pero la pregunta más importante: ¿es lo más sencillo que hacía falta? ¿o se podía hacer menos y todo andaba?*
 
-Sacariamos este código utilizando diccionarios para representar los recursos y además haciendo que las avispas sean hijas de un objeto que represente la idea de una avispa, el cual tenga los métodos principales que puede llegar a realizar una avispa, como por ejemplo, reproducirse.
+Sacaríamos este código utilizando diccionarios para representar los recursos. Además, crearíamos un objeto que represente la idea de recurso. De esta forma, podriamos llegar a generalizar los metodos de `agregarRecurso` o `consumirRecurso`.
+
+Además haciendo que las avispas sean hijas de un objeto que represente la idea de una avispa, el cual tenga los métodos principales que puede llegar a realizar una avispa. En nuestra opinión, en este caso no tiene mucho sentido ya que la única función que nos interesa de las avispas es `intentarReproducirse` , la cual varia en implementación de avispa a avispa.
 
 Para guardar los huevos, utilizamos un diccionario que contiene como claves las firmas genéticas de las avispas y como valor, la cantidad de huevos con esa firma.
 
