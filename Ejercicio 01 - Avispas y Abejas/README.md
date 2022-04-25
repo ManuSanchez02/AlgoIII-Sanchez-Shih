@@ -27,7 +27,7 @@ En nuestro modelo, el responsable para ver si hay suficientes polillas u orugas 
 
 Sacaríamos este código utilizando diccionarios para representar los recursos. Además, crearíamos un objeto que represente la idea de recurso. De esta forma, podriamos llegar a generalizar los metodos de `agregarRecurso` o `consumirRecurso`.
 
-Además haciendo que las avispas sean hijas de un objeto que represente la idea de una avispa, el cual tenga los métodos principales que puede llegar a realizar una avispa. En nuestra opinión, en este caso no tiene mucho sentido ya que la única función que nos interesa de las avispas es `intentarReproducirse` , la cual varia en implementación de avispa a avispa.
+Además, evitamos repetir codigo haciendo que Ornella sea hija de Oriana. Debido a que la implementacion de su unico metodo es igual, conseguimos no repetir el codigo.
 
 Para guardar los huevos, utilizamos un diccionario que contiene como claves las firmas genéticas de las avispas y como valor, la cantidad de huevos con esa firma.
 
