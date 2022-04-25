@@ -1,3 +1,33 @@
+!classDefinition: #AvispaLara category: 'AvispasYAbejasParte2'!
+DenotativeObject subclass: #AvispaLara
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'AvispasYAbejasParte2'!
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'AvispaLara class' category: 'AvispasYAbejasParte2'!
+AvispaLara class
+	instanceVariableNames: 'elHabitat'!
+
+!AvispaLara class methodsFor: 'as yet unclassified' stamp: 'IM 4/24/2022 17:29:11'!
+intentarReproducirse
+	|cantidadDeHuevosDeAvispasQueNoSeanDeLara|
+	cantidadDeHuevosDeAvispasQueNoSeanDeLara := elHabitat cantidadDeHuevosDeAvispas - elHabitat cantidadDeHuevosConLaFirmaGeneticaDeLara.
+	cantidadDeHuevosDeAvispasQueNoSeanDeLara  > 0 ifTrue: [
+		elHabitat agregarHuevoConFirmaGenetica: 'FirmaGeneticaDeLara'.
+		elHabitat huevoEsConsumido.
+	]! !
+
+
+!AvispaLara class methodsFor: '--** private fileout/in **--' stamp: 'IM 4/24/2022 17:31:34'!
+initializeCollaboratorsFromFile
+	"Auto generated method for loading purposes - Do not modify it"
+
+	elHabitat := ElHabitatDeLasAvispas.! !
+
+
 !classDefinition: #AvispaOriana category: 'AvispasYAbejasParte2'!
 DenotativeObject subclass: #AvispaOriana
 	instanceVariableNames: ''
@@ -19,37 +49,7 @@ intentarReproducirse
 	]! !
 
 
-!AvispaOriana class methodsFor: '--** private fileout/in **--' stamp: 'IS 4/23/2022 18:34:17'!
-initializeCollaboratorsFromFile
-	"Auto generated method for loading purposes - Do not modify it"
-
-	elHabitat := ElHabitatDeLasAvispas.! !
-
-
-!classDefinition: #AvispaLara category: 'AvispasYAbejasParte2'!
-AvispaOriana subclass: #AvispaLara
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'AvispasYAbejasParte2'!
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'AvispaLara class' category: 'AvispasYAbejasParte2'!
-AvispaLara class
-	instanceVariableNames: ''!
-
-!AvispaLara class methodsFor: 'reproduccion-publico' stamp: 'IS 4/23/2022 18:25:16'!
-intentarReproducirse
-	|cantidadDeHuevosDeAvispasQueNoSeanDeLara|
-	cantidadDeHuevosDeAvispasQueNoSeanDeLara := elHabitat cantidadDeHuevosDeAvispas - elHabitat cantidadDeHuevosConLaFirmaGeneticaDeLara.
-	cantidadDeHuevosDeAvispasQueNoSeanDeLara  > 0 ifTrue: [
-		elHabitat agregarHuevoConFirmaGenetica: 'FirmaGeneticaDeLara'.
-		elHabitat huevoEsConsumido.
-	]! !
-
-
-!AvispaLara class methodsFor: '--** private fileout/in **--' stamp: 'IS 4/23/2022 18:34:17'!
+!AvispaOriana class methodsFor: '--** private fileout/in **--' stamp: 'IM 4/24/2022 17:31:34'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -69,7 +69,7 @@ AvispaOriana subclass: #AvispaOrnella
 AvispaOrnella class
 	instanceVariableNames: ''!
 
-!AvispaOrnella class methodsFor: '--** private fileout/in **--' stamp: 'IS 4/23/2022 18:34:17'!
+!AvispaOrnella class methodsFor: '--** private fileout/in **--' stamp: 'IM 4/24/2022 17:31:34'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -77,7 +77,7 @@ initializeCollaboratorsFromFile
 
 
 !classDefinition: #AvispaPolly category: 'AvispasYAbejasParte2'!
-AvispaOriana subclass: #AvispaPolly
+DenotativeObject subclass: #AvispaPolly
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -87,9 +87,9 @@ AvispaOriana subclass: #AvispaPolly
 
 !classDefinition: 'AvispaPolly class' category: 'AvispasYAbejasParte2'!
 AvispaPolly class
-	instanceVariableNames: ''!
+	instanceVariableNames: 'elHabitat'!
 
-!AvispaPolly class methodsFor: 'reproduccion-publico' stamp: 'IS 4/23/2022 18:25:21'!
+!AvispaPolly class methodsFor: 'reproduccion-publico' stamp: 'IM 4/24/2022 17:30:30'!
 intentarReproducirse
 	elHabitat cantidadDePolillas > 0 ifTrue: [
 		elHabitat agregarHuevoConFirmaGenetica: 'FirmaGeneticaDePolly'.
@@ -97,7 +97,7 @@ intentarReproducirse
 	]! !
 
 
-!AvispaPolly class methodsFor: '--** private fileout/in **--' stamp: 'IS 4/23/2022 18:34:17'!
+!AvispaPolly class methodsFor: '--** private fileout/in **--' stamp: 'IM 4/24/2022 17:31:34'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -189,7 +189,7 @@ volverEnElTiempo
 	criaderoDeAvispas := Dictionary new.! !
 
 
-!ElHabitatDeLasAvispas class methodsFor: '--** private fileout/in **--' stamp: 'IS 4/23/2022 18:34:17'!
+!ElHabitatDeLasAvispas class methodsFor: '--** private fileout/in **--' stamp: 'IM 4/24/2022 17:31:34'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -430,9 +430,9 @@ hacerQueElHabitatTengaLosRecursosSuficientes
 	self habitat agregarOrugas: 2.
 	self habitat agregarPolillas: 1.! !
 
-!PruebasReproduccionDeAvispas class methodsFor: 'Para completar' stamp: 'IS 4/23/2022 18:07:58'!
+!PruebasReproduccionDeAvispas class methodsFor: 'Para completar' stamp: 'IM 4/24/2022 17:31:08'!
 laAvispaLara
-	^AvispaLara ! !
+	^AvispaLara! !
 
 !PruebasReproduccionDeAvispas class methodsFor: 'Para completar' stamp: 'IS 4/21/2022 19:30:50'!
 laAvispaOriana
@@ -442,7 +442,7 @@ laAvispaOriana
 laAvispaOrnella
 	^AvispaOriana ! !
 
-!PruebasReproduccionDeAvispas class methodsFor: 'Para completar' stamp: 'IS 4/21/2022 21:47:57'!
+!PruebasReproduccionDeAvispas class methodsFor: 'Para completar' stamp: 'IM 4/24/2022 17:31:16'!
 laAvispaPolly
 	^AvispaPolly! !
 
@@ -466,8 +466,8 @@ queElHabitatTengaUnaPolillaMas
 retrocederElHabitatAlInicioDeLosTiempos
 	self habitat volverEnElTiempo.! !
 
-AvispaOriana initializeAfterFileIn!
 AvispaLara initializeAfterFileIn!
+AvispaOriana initializeAfterFileIn!
 AvispaOrnella initializeAfterFileIn!
 AvispaPolly initializeAfterFileIn!
 ElHabitatDeLasAvispas initializeAfterFileIn!
