@@ -77,8 +77,8 @@ correctNumberOfCustomers: aNumber andIncludes: aCustomer in: aCustomerBook
 	^(aCustomerBook numberOfCustomers = aNumber) and: [aCustomerBook includesCustomerNamed: aCustomer].
 ! !
 
-!CustomerBookTest methodsFor: 'private-testing' stamp: 'MS 5/2/2022 02:31:29'!
-test: aBlockThatFails on: anError  assert: aBlockToAssert 
+!CustomerBookTest methodsFor: 'private-testing' stamp: 'IS 5/2/2022 16:18:40'!
+try: aBlockThatFails on: anError  assert: aBlockToAssert 
 	
 	[ aBlockThatFails value.
 	self fail ]
@@ -112,17 +112,17 @@ test02RemovingCustomerShouldNotTakeMoreThan100Milliseconds
 	
 ! !
 
-!CustomerBookTest methodsFor: 'testing' stamp: 'MS 5/2/2022 02:46:15'!
+!CustomerBookTest methodsFor: 'testing' stamp: 'IS 5/2/2022 16:18:40'!
 test03CanNotAddACustomerWithEmptyName 
 
 	| customerBook |
 			
 	customerBook := CustomerBook new.
 		
-	self test: [ customerBook addCustomerNamed: '' ] on: Error 
+	self try: [ customerBook addCustomerNamed: '' ] on: Error 
 		assert: [ :anError | (anError messageText = CustomerBook customerCanNotBeEmptyErrorMessage) and: [customerBook isEmpty]].! !
 
-!CustomerBookTest methodsFor: 'testing' stamp: 'MS 5/2/2022 02:28:12'!
+!CustomerBookTest methodsFor: 'testing' stamp: 'IS 5/2/2022 16:18:40'!
 test04CanNotRemoveAnInvalidCustomer
 	
 	| customerBook johnLennon |
@@ -131,7 +131,7 @@ test04CanNotRemoveAnInvalidCustomer
 	johnLennon := 'John Lennon'.
 	customerBook addCustomerNamed: johnLennon.
 	
-	self test: [ customerBook removeCustomerNamed: 'Paul McCartney' ] on: NotFound 
+	self try: [ customerBook removeCustomerNamed: 'Paul McCartney' ] on: NotFound 
 		assert: [ 	customerBook numberOfCustomers = 1 and: [		customerBook includesCustomerNamed: johnLennon ]].
 ! !
 
@@ -172,7 +172,7 @@ test06RemovingASuspendedCustomerShouldRemoveItFromCustomerBook
 	
 ! !
 
-!CustomerBookTest methodsFor: 'testing' stamp: 'MS 5/2/2022 02:42:38'!
+!CustomerBookTest methodsFor: 'testing' stamp: 'IS 5/2/2022 16:18:40'!
 test07CanNotSuspendAnInvalidCustomer
 	
 	| customerBook johnLennon |
@@ -182,10 +182,10 @@ test07CanNotSuspendAnInvalidCustomer
 	customerBook addCustomerNamed: johnLennon.
 	
 		
-	self test: [ customerBook suspendCustomerNamed: 'Ringo Starr' ] on: CantSuspend assert: [self correctNumberOfCustomers: 1 andIncludes: johnLennon in: customerBook].
+	self try: [ customerBook suspendCustomerNamed: 'Ringo Starr' ] on: CantSuspend assert: [self correctNumberOfCustomers: 1 andIncludes: johnLennon in: customerBook].
 ! !
 
-!CustomerBookTest methodsFor: 'testing' stamp: 'MS 5/2/2022 02:42:38'!
+!CustomerBookTest methodsFor: 'testing' stamp: 'IS 5/2/2022 16:18:40'!
 test08CanNotSuspendAnAlreadySuspendedCustomer
 	
 	| customerBook johnLennon |		
@@ -193,7 +193,7 @@ test08CanNotSuspendAnAlreadySuspendedCustomer
 	johnLennon := 'John Lennon'.
 	self addSuspendedCustomer: johnLennon to: customerBook.
 	
-	self test: [ customerBook suspendCustomerNamed: johnLennon.] on: CantSuspend assert: [self correctNumberOfCustomers: 1 andIncludes: johnLennon in: customerBook]
+	self try: [ customerBook suspendCustomerNamed: johnLennon.] on: CantSuspend assert: [self correctNumberOfCustomers: 1 andIncludes: johnLennon in: customerBook]
 ! !
 
 
@@ -258,11 +258,6 @@ removeCustomerNamed: aName
 	^ NotFound signal.
 ! !
 
-!CustomerBook methodsFor: 'customer management' stamp: 'MS 5/2/2022 03:07:19'!
-signal: aClassMessageSymbol
-
-	self error: (aClassMessageSymbol asMessage sendTo: (self class)).! !
-
 !CustomerBook methodsFor: 'customer management' stamp: 'MS 5/2/2022 03:02:47'!
 signalCustomerAlreadyExists 
 
@@ -280,6 +275,12 @@ suspendCustomerNamed: aName
 	
 	suspended add: aName
 ! !
+
+
+!CustomerBook methodsFor: 'private' stamp: 'MS 5/2/2022 03:07:19'!
+signal: aClassMessageSymbol
+
+	self error: (aClassMessageSymbol asMessage sendTo: (self class)).! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
