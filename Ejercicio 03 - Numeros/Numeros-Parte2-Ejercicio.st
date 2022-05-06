@@ -369,6 +369,10 @@ invalidNumberType
 substractAFraccion: aFraccionMinuend
 	self subclassResponsibility ! !
 
+!Numero methodsFor: 'private' stamp: 'IS 5/5/2022 21:25:04'!
+substractAnEntero: anEnteroMinuend
+	self subclassResponsibility ! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Numero class' category: 'Numeros-Parte2-Ejercicio'!
