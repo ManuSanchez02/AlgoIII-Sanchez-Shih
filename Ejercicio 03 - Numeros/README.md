@@ -39,8 +39,8 @@ Cada subclase puede responder de forma distinta al mensaje. En consecuencia, no 
 
 Asimismo, si estuviéramos desarrollando una subclase y de casualidad nos olvidamos de implementar un método polimórfico, al correr los tests, nos encontramos con un error que dice algo como:
 
-```
-Error: My subclass should have overridden #nombreDelMetodo
+```smalltalk
+Error: my subclass should have overridden #nombreDelMetodo
 ```
 
 Que quiere decir que la subclase tenía la responsabilidad de definir el comportamiento del método pero no lo hizo.
