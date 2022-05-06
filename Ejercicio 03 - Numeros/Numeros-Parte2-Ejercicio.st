@@ -485,26 +485,32 @@ isZero
 	
 	^self class with: value // aDivisor integerValue! !
 
-!Entero methodsFor: 'arithmetic operations - private' stamp: 'IS 5/5/2022 20:58:49'!
+!Entero methodsFor: 'arithmetic operations - private' stamp: 'MS 5/6/2022 18:31:43'!
 beAddedToAFraccion: aFraccionAugend
-	| newNumerator |
+	| newNumerator newDenominator |
 
 	newNumerator  := (self * aFraccionAugend denominator) + aFraccionAugend numerator.
+	newDenominator  := aFraccionAugend  denominator.
 
-	^Fraccion with: newNumerator  over: aFraccionAugend  denominator .! !
+	^newNumerator / newDenominator .! !
 
-!Entero methodsFor: 'arithmetic operations - private' stamp: 'IS 5/5/2022 20:58:10'!
-beAddedToAnEntero: anAugend
-	^self class with: anAugend integerValue + self integerValue.! !
+!Entero methodsFor: 'arithmetic operations - private' stamp: 'MS 5/6/2022 18:31:51'!
+beAddedToAnEntero: anEnteroAugend
 
-!Entero methodsFor: 'arithmetic operations - private' stamp: 'IS 5/5/2022 21:01:46'!
+	^self class with: anEnteroAugend integerValue + self integerValue.! !
+
+!Entero methodsFor: 'arithmetic operations - private' stamp: 'MS 5/6/2022 18:28:06'!
 beMultipliedToAFraccion: aFraccionMultiplier
-	| newNumerator |
+	| newNumerator newDenominator |
+	
 	newNumerator := aFraccionMultiplier numerator * self.
-	^newNumerator / aFraccionMultiplier denominator! !
+	newDenominator := aFraccionMultiplier denominator.
+	
+	^newNumerator / newDenominator! !
 
-!Entero methodsFor: 'arithmetic operations - private' stamp: 'IS 5/5/2022 20:48:16'!
+!Entero methodsFor: 'arithmetic operations - private' stamp: 'MS 5/6/2022 18:28:46'!
 beMultipliedToAnEntero: anEnteroMultiplier
+
 	^self class with: anEnteroMultiplier integerValue * self integerValue.! !
 
 !Entero methodsFor: 'arithmetic operations - private' stamp: 'IS 5/6/2022 17:35:46'!
@@ -516,8 +522,9 @@ beSubstractedToAFraccion: aFraccionMinuend
 	
 	^newNumerator / newDenominator.! !
 
-!Entero methodsFor: 'arithmetic operations - private' stamp: 'IS 5/6/2022 17:29:13'!
+!Entero methodsFor: 'arithmetic operations - private' stamp: 'MS 5/6/2022 18:28:51'!
 beSubstractedToAnEntero: anEnteroMinuend
+
 	^self class with: anEnteroMinuend integerValue - self integerValue.! !
 
 !Entero methodsFor: 'arithmetic operations - private' stamp: 'IS 5/5/2022 21:16:14'!
@@ -529,8 +536,9 @@ divideAFraccion: aFraccionDividend
 
 	^ newNumerator / newDenominator.! !
 
-!Entero methodsFor: 'arithmetic operations - private' stamp: 'IS 5/5/2022 21:14:48'!
+!Entero methodsFor: 'arithmetic operations - private' stamp: 'MS 5/6/2022 18:28:56'!
 divideAnEntero: anEnteroDividend
+
 	^Fraccion with: anEnteroDividend over: self.! !
 
 !Entero methodsFor: 'arithmetic operations - private' stamp: 'HernanWilkinson 5/7/2016 21:00'!
@@ -644,21 +652,26 @@ beAddedToAFraccion: aFraccionAugend
 	
 	^newNumerator / newDenominator ! !
 
-!Fraccion methodsFor: 'arithmetic operations - private' stamp: 'IS 5/5/2022 20:10:09'!
+!Fraccion methodsFor: 'arithmetic operations - private' stamp: 'MS 5/6/2022 18:34:10'!
 beAddedToAnEntero: anEnteroAugend
+
 	^((anEnteroAugend * denominator) + numerator) / denominator ! !
 
-!Fraccion methodsFor: 'arithmetic operations - private' stamp: 'IS 5/5/2022 21:00:36'!
+!Fraccion methodsFor: 'arithmetic operations - private' stamp: 'MS 5/6/2022 18:33:59'!
 beMultipliedToAFraccion: aFraccionMultiplier
 	| newNumerator newDenominator |
+	
 	newNumerator := numerator * aFraccionMultiplier numerator.
 	newDenominator := denominator * aFraccionMultiplier denominator.
+	
 	^newNumerator / newDenominator! !
 
-!Fraccion methodsFor: 'arithmetic operations - private' stamp: 'IS 5/5/2022 21:01:14'!
+!Fraccion methodsFor: 'arithmetic operations - private' stamp: 'MS 5/6/2022 18:34:02'!
 beMultipliedToAnEntero: anEnteroMultiplier
 	| newNumerator |
+	
 	newNumerator := anEnteroMultiplier * numerator.
+	
 	^newNumerator / denominator.! !
 
 !Fraccion methodsFor: 'arithmetic operations - private' stamp: 'IS 5/6/2022 17:31:29'!
