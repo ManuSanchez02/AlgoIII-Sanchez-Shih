@@ -1,4 +1,4 @@
-!classDefinition: #OOStackTest category: #'Stack-Exercise'!
+!classDefinition: #OOStackTest category: 'Stack-Exercise'!
 TestCase subclass: #OOStackTest
 	instanceVariableNames: ''
 	classVariableNames: ''
@@ -137,7 +137,7 @@ test10CanNotTopWhenThereAreNoObjectsInTheStack
 ! !
 
 
-!classDefinition: #SentenceFinderByPrefixTest category: #'Stack-Exercise'!
+!classDefinition: #SentenceFinderByPrefixTest category: 'Stack-Exercise'!
 TestCase subclass: #SentenceFinderByPrefixTest
 	instanceVariableNames: ''
 	classVariableNames: ''
@@ -145,16 +145,76 @@ TestCase subclass: #SentenceFinderByPrefixTest
 	category: 'Stack-Exercise'!
 
 
-!classDefinition: #OOStack category: #'Stack-Exercise'!
+!classDefinition: #OOStack category: 'Stack-Exercise'!
 Object subclass: #OOStack
-	instanceVariableNames: ''
+	instanceVariableNames: 'elementsInStack'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
+!OOStack methodsFor: 'adding' stamp: 'MS 5/11/2022 23:38:29'!
+push: aString 
+
+	elementsInStack addFirst: aString.! !
+
+
+!OOStack methodsFor: 'private' stamp: 'MS 5/12/2022 00:14:26'!
+emptyStackError
+
+	^self error: self class stackEmptyErrorDescription.! !
+
+!OOStack methodsFor: 'private' stamp: 'MS 5/11/2022 23:37:12'!
+notEmptyStackPop
+
+	^elementsInStack removeFirst.! !
+
+!OOStack methodsFor: 'private' stamp: 'MS 5/11/2022 23:30:03'!
+notEmptyStackTop
+
+	^elementsInStack first.! !
+
+
+!OOStack methodsFor: 'accessing' stamp: 'MS 5/12/2022 00:10:55'!
+currentState
+
+	| subclasses currentState |
+
+	subclasses := OOStackState subclasses.
+	
+	currentState := subclasses detect: [ :aState | aState validStateFor: self isEmpty. ].
+
+	^currentState new.! !
+
+!OOStack methodsFor: 'accessing' stamp: 'MS 5/11/2022 22:31:49'!
+isEmpty
+	
+	^self size = 0.! !
+
+!OOStack methodsFor: 'accessing' stamp: 'MS 5/11/2022 23:38:35'!
+size
+
+	^elementsInStack size.! !
+
+!OOStack methodsFor: 'accessing' stamp: 'MS 5/11/2022 23:27:31'!
+top
+
+	^self currentState top: self.! !
+
+
+!OOStack methodsFor: 'removing' stamp: 'MS 5/11/2022 23:36:09'!
+pop
+
+	^self currentState pop: self.! !
+
+
+!OOStack methodsFor: 'initializing' stamp: 'MS 5/11/2022 23:38:21'!
+initialize
+
+	elementsInStack  := OrderedCollection new.! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!classDefinition: 'OOStack class' category: #'Stack-Exercise'!
+!classDefinition: 'OOStack class' category: 'Stack-Exercise'!
 OOStack class
 	instanceVariableNames: ''!
 
@@ -164,7 +224,91 @@ stackEmptyErrorDescription
 	^ 'Stack is empty'! !
 
 
-!classDefinition: #SentenceFinderByPrefix category: #'Stack-Exercise'!
+!classDefinition: #OOStackState category: 'Stack-Exercise'!
+Object subclass: #OOStackState
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!OOStackState methodsFor: 'public' stamp: 'MS 5/11/2022 23:41:21'!
+pop: anOOStack
+	self subclassResponsibility.! !
+
+!OOStackState methodsFor: 'public' stamp: 'MS 5/11/2022 23:41:25'!
+top: anOOStack
+	self subclassResponsibility.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'OOStackState class' category: 'Stack-Exercise'!
+OOStackState class
+	instanceVariableNames: ''!
+
+!OOStackState class methodsFor: 'testing' stamp: 'MS 5/12/2022 00:16:36'!
+validStateFor: aStackIsEmptyBoolean
+	self subclassResponsibility.! !
+
+
+!classDefinition: #OOStackEmptyState category: 'Stack-Exercise'!
+OOStackState subclass: #OOStackEmptyState
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!OOStackEmptyState methodsFor: 'public' stamp: 'MS 5/12/2022 00:14:36'!
+pop: anOOStack
+	
+	^anOOStack emptyStackError. ! !
+
+!OOStackEmptyState methodsFor: 'public' stamp: 'MS 5/12/2022 00:14:38'!
+top: anOOStack
+	
+	^anOOStack emptyStackError. ! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'OOStackEmptyState class' category: 'Stack-Exercise'!
+OOStackEmptyState class
+	instanceVariableNames: ''!
+
+!OOStackEmptyState class methodsFor: 'testing' stamp: 'MS 5/12/2022 00:12:44'!
+validStateFor: aStackIsEmptyBoolean
+
+	^aStackIsEmptyBoolean! !
+
+
+!classDefinition: #OOStackNotEmptyState category: 'Stack-Exercise'!
+OOStackState subclass: #OOStackNotEmptyState
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!OOStackNotEmptyState methodsFor: 'public' stamp: 'MS 5/11/2022 23:36:30'!
+pop: anOOStack
+
+	^anOOStack notEmptyStackPop.! !
+
+!OOStackNotEmptyState methodsFor: 'public' stamp: 'MS 5/11/2022 23:29:35'!
+top: anOOStack
+
+	^anOOStack notEmptyStackTop.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'OOStackNotEmptyState class' category: 'Stack-Exercise'!
+OOStackNotEmptyState class
+	instanceVariableNames: ''!
+
+!OOStackNotEmptyState class methodsFor: 'testing' stamp: 'MS 5/12/2022 00:12:25'!
+validStateFor: aStackIsEmptyBoolean
+
+	^aStackIsEmptyBoolean not.! !
+
+
+!classDefinition: #SentenceFinderByPrefix category: 'Stack-Exercise'!
 Object subclass: #SentenceFinderByPrefix
 	instanceVariableNames: ''
 	classVariableNames: ''
