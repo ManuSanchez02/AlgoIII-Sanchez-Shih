@@ -144,6 +144,100 @@ TestCase subclass: #SentenceFinderByPrefixTest
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
+!SentenceFinderByPrefixTest methodsFor: 'testing - private' stamp: 'IS 5/12/2022 20:57:45'!
+assertStack: aStack orderIsEqualTo: anOrderedCollection
+
+	self assert: aStack size equals: anOrderedCollection size.
+
+	self shouldBeImplemented.! !
+
+
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'IS 5/12/2022 20:27:37'!
+test01FindingEmptyPrefixInSentenceFinderReturnsEmptyPrefixError
+	
+	| sentenceFinderByPrefix stack |
+	
+	stack := OOStack new.
+	
+	sentenceFinderByPrefix := SentenceFinderByPrefix with: stack.
+	
+	self
+		should: [ sentenceFinderByPrefix find: '' ]
+		raise:  Error - MessageNotUnderstood 
+		withExceptionDo: [ :anError |
+			self assert: anError messageText = SentenceFinderByPrefix prefixCannotBeEmptyError ]! !
+
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'IS 5/12/2022 20:29:48'!
+test02FindingPrefixWithSpacesInSentenceFinderReturnsPrefixCannotIncludeEmptySpacesError
+	
+	| sentenceFinderByPrefix stack |
+	
+	stack := OOStack new.
+	
+	stack push: 'hola mundo'.
+	
+	sentenceFinderByPrefix := SentenceFinderByPrefix with: stack.
+	
+	self
+		should: [ sentenceFinderByPrefix find: 'hola mundo' ]
+		raise:  Error - MessageNotUnderstood 
+		withExceptionDo: [ :anError |
+			self assert: anError messageText = SentenceFinderByPrefix prefixCannotIncludeEmptySpacesError ]! !
+
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'IS 5/12/2022 20:29:03'!
+test03findingAPrefixOnEmptyStackReturnsEmptyCollection
+	
+	| sentenceFinderByPrefix stack |
+	
+	stack := OOStack new.
+	
+	sentenceFinderByPrefix := SentenceFinderByPrefix with: stack.
+
+	
+	self assert: (	(sentenceFinderByPrefix find: 'hola') size = 0).! !
+
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'IS 5/12/2022 20:29:09'!
+test04findingPrefixWintOnNonEmptyStackReturnsWinterIsHere
+	
+	| sentenceFinderByPrefix stack winterIsHereCollection |
+	
+	stack := OOStack new.
+	
+	stack push: 'winter is coming'.
+	stack push: 'winning is everything'.
+	stack push: 'The winds of Winter'.
+	stack push: 'Winter is here'.
+	
+	sentenceFinderByPrefix := SentenceFinderByPrefix with: stack.
+	
+	winterIsHereCollection := OrderedCollection new.
+	winterIsHereCollection add: 'Winter is here'.
+	
+	
+	self assert: (	(sentenceFinderByPrefix find: 'Wint')) equals: winterIsHereCollection.! !
+
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'IS 5/12/2022 21:00:11'!
+test05findingAPrefixWithMultipleMatchesOnNonEmptyStackReturnsTheMatches
+	
+	| sentenceFinderByPrefix stack expectedCollection |
+	
+	stack := OOStack new.
+	
+	stack push: 'winter is coming'.
+	stack push: 'winning is everything'.
+	stack push: 'Windows XP'.	
+	stack push: 'The winds of Winter'.
+	stack push: 'Winter is here'.
+	stack push: 'Winter is not here'.	
+	
+	sentenceFinderByPrefix := SentenceFinderByPrefix with: stack.
+	
+	expectedCollection := OrderedCollection new.
+	
+	expectedCollection addAll: #('Winter is not here' 'Winter is here' 'Windows XP').
+		
+	self assert: (sentenceFinderByPrefix find: 'Win') equals: expectedCollection.! !
+
 
 !classDefinition: #OOStack category: 'Stack-Exercise'!
 Object subclass: #OOStack
@@ -310,7 +404,66 @@ validStateFor: aStackIsEmptyBoolean
 
 !classDefinition: #SentenceFinderByPrefix category: 'Stack-Exercise'!
 Object subclass: #SentenceFinderByPrefix
-	instanceVariableNames: ''
+	instanceVariableNames: 'sentenceStack'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
+
+!SentenceFinderByPrefix methodsFor: 'initialization' stamp: 'IS 5/12/2022 19:53:06'!
+initializeWith: aSentenceStack
+
+	sentenceStack := aSentenceStack.! !
+
+
+!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'IS 5/12/2022 20:20:03'!
+assertValidPrefix: aPrefix
+	
+	(aPrefix includes: $ ) ifTrue: [^self error: 	self class prefixCannotIncludeEmptySpacesError ].
+	(aPrefix size = 0) ifTrue: [^self error: self class prefixCannotBeEmptyError ].
+	! !
+
+!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'IS 5/12/2022 20:20:25'!
+find: aPrefix
+
+	| auxiliaryStack aSentenceCollection |
+	
+	self assertValidPrefix: aPrefix.
+	
+	auxiliaryStack := OOStack new.
+	aSentenceCollection := OrderedCollection new.
+	
+	[ sentenceStack isEmpty not ] whileTrue: [	 
+		| sentence |
+		sentence := sentenceStack pop.
+		auxiliaryStack push: sentence.
+		
+		(sentence beginsWith: aPrefix) ifTrue: [ aSentenceCollection add: sentence ].		
+	].
+
+	[ auxiliaryStack isEmpty not ] whileTrue: [
+		sentenceStack push: auxiliaryStack pop.
+	].
+
+	^aSentenceCollection ! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'SentenceFinderByPrefix class' category: 'Stack-Exercise'!
+SentenceFinderByPrefix class
+	instanceVariableNames: ''!
+
+!SentenceFinderByPrefix class methodsFor: 'initialization' stamp: 'IS 5/12/2022 19:53:54'!
+with: aSentenceStack
+
+	^self new initializeWith: aSentenceStack.! !
+
+
+!SentenceFinderByPrefix class methodsFor: 'error descriptions' stamp: 'IS 5/12/2022 20:18:58'!
+prefixCannotBeEmptyError
+	
+	^'Prefix cannot be empty'! !
+
+!SentenceFinderByPrefix class methodsFor: 'error descriptions' stamp: 'IS 5/12/2022 20:19:17'!
+prefixCannotIncludeEmptySpacesError
+	
+	^'Prefix cannot include empty spaces'! !
