@@ -144,6 +144,11 @@ TestCase subclass: #SentenceFinderByPrefixTest
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
+!SentenceFinderByPrefixTest methodsFor: 'testing - private' stamp: 'MS 5/15/2022 14:24:31'!
+addElementsFrom: anOrderedCollection to: aStack
+
+	anOrderedCollection do: [:anElement | aStack push: anElement ].! !
+
 !SentenceFinderByPrefixTest methodsFor: 'testing - private' stamp: 'IS 5/12/2022 20:57:45'!
 assertStack: aStack orderIsEqualTo: anOrderedCollection
 
@@ -216,27 +221,39 @@ test04findingPrefixWintOnNonEmptyStackReturnsWinterIsHere
 	
 	self assert: (	(sentenceFinderByPrefix find: 'Wint')) equals: winterIsHereCollection.! !
 
-!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'IS 5/12/2022 21:00:11'!
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'MS 5/15/2022 14:26:27'!
 test05findingAPrefixWithMultipleMatchesOnNonEmptyStackReturnsTheMatches
 	
-	| sentenceFinderByPrefix stack expectedCollection |
+	| sentenceFinderByPrefix stack expectedCollection correctOrderCollection |
 	
 	stack := OOStack new.
-	
-	stack push: 'winter is coming'.
-	stack push: 'winning is everything'.
-	stack push: 'Windows XP'.	
-	stack push: 'The winds of Winter'.
-	stack push: 'Winter is here'.
-	stack push: 'Winter is not here'.	
-	
 	sentenceFinderByPrefix := SentenceFinderByPrefix with: stack.
-	
 	expectedCollection := OrderedCollection new.
+	correctOrderCollection := OrderedCollection new.
 	
 	expectedCollection addAll: #('Winter is not here' 'Winter is here' 'Windows XP').
+	correctOrderCollection addAll: #('winter is coming' 'winning is everything' 'Windows XP' 'The winds of Winter' 'Winter is here' 'Winter is not here').
+	
+	self addElementsFrom: correctOrderCollection to: stack.
 		
-	self assert: (sentenceFinderByPrefix find: 'Win') equals: expectedCollection.! !
+	self assert: (sentenceFinderByPrefix find: 'Win') equals: expectedCollection.
+	self assert: (self stackOrderOf: stack isEqualTo: correctOrderCollection ).
+! !
+
+
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'MS 5/15/2022 14:38:02'!
+stackOrderOf: aStack isEqualTo: anOrderedCollection 
+	| reversedStack |
+	
+	reversedStack := OOStack new.
+	
+	[ aStack isEmpty not ] whileTrue: [
+		| currentElement |
+		
+		currentElement := aStack pop.
+		
+		reversedStack push: currentElement.	
+	]! !
 
 
 !classDefinition: #OOStack category: 'Stack-Exercise'!
