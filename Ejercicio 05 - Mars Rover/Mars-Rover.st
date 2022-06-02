@@ -5,73 +5,89 @@ TestCase subclass: #MarsRoverTests
 	poolDictionaries: ''
 	category: 'Mars-Rover'!
 
-!MarsRoverTests methodsFor: 'tests' stamp: 'IS 5/31/2022 22:33:53'!
+!MarsRoverTests methodsFor: 'creation' stamp: 'IS 5/31/2022 22:33:53'!
 test01MarsRoverPositionWhenCreatedIsTheSamePosition
 	| marsRover |
 	marsRover := MarsRover at: 0@0 facing: norte.
 	self assert: marsRover position equals: 0@0.! !
 
-!MarsRoverTests methodsFor: 'tests' stamp: 'IS 5/31/2022 22:33:59'!
+!MarsRoverTests methodsFor: 'creation' stamp: 'MS 6/2/2022 14:58:28'!
 test02MarsRoverDirectionWhenCreatedIsTheSameDirection
 	| marsRover |
 	marsRover := MarsRover at: 0@0 facing: norte.
 	self assert: marsRover direction equals: norte.! !
 
-!MarsRoverTests methodsFor: 'tests' stamp: 'IS 5/31/2022 22:34:13'!
+!MarsRoverTests methodsFor: 'creation' stamp: 'IS 5/31/2022 22:34:13'!
 test03MarsRoverPositionWhenCreatedIsTheSamePosition
 	| marsRover |
 	marsRover := MarsRover at: 0@1 facing: norte.
 	self assert: marsRover position equals: 0@1.! !
 
-!MarsRoverTests methodsFor: 'tests' stamp: 'IS 5/31/2022 22:34:36'!
+!MarsRoverTests methodsFor: 'creation' stamp: 'IS 5/31/2022 22:34:36'!
 test04MarsRoverDirectionWhenCreatedIsTheSameDirection
 	| marsRover |
 	marsRover := MarsRover at: 0@0 facing: este.
 	self assert: marsRover direction equals: este.! !
 
-!MarsRoverTests methodsFor: 'tests' stamp: 'MS 5/31/2022 23:15:50'!
+
+!MarsRoverTests methodsFor: 'valid command executing' stamp: 'MS 6/2/2022 14:59:27'!
 test05MarsRoverPositionIncreasesTowardsCurrentDirectionWhenGoingForward
 	| marsRover |
 	marsRover := MarsRover at: 0@0 facing: este.
-	marsRover executeCommands: 'f'.
-	self assert: marsRover position equals: 1@0.! !
+	self sendCommands: 'f' to: marsRover andAssertPositionIs: (1@0) andDirectionIs: este.! !
 
-!MarsRoverTests methodsFor: 'tests' stamp: 'MS 5/31/2022 23:18:16'!
+!MarsRoverTests methodsFor: 'valid command executing' stamp: 'MS 6/2/2022 14:59:45'!
 test06MarsRoverFacingEastWhenRotatingLeftChangesToFaceNorth
 	| marsRover |
 	marsRover := MarsRover at: 0@0 facing: este.
-	marsRover executeCommands: 'l'.
-	self assert: marsRover direction equals: norte.! !
+	
+	self sendCommands: 'l' to: marsRover andAssertPositionIs: (0@0) andDirectionIs: norte.! !
 
-!MarsRoverTests methodsFor: 'tests' stamp: 'MS 5/31/2022 23:18:55'!
+!MarsRoverTests methodsFor: 'valid command executing' stamp: 'MS 6/2/2022 15:00:17'!
 test07MarsRoverFacingNorthWhenRotatingLeftChangesToFaceWest
 	| marsRover |
 	marsRover := MarsRover at: 0@0 facing: norte.
-	marsRover executeCommands: 'l'.
-	self assert: marsRover direction equals: oeste.! !
+	self sendCommands: 'l' to: marsRover andAssertPositionIs: (0@0) andDirectionIs: oeste.! !
 
-!MarsRoverTests methodsFor: 'tests' stamp: 'MS 5/31/2022 23:19:17'!
+!MarsRoverTests methodsFor: 'valid command executing' stamp: 'MS 6/2/2022 15:00:34'!
 test08MarsRoverFacingNorthWhenRotatingRightChangesToFaceEast
 	| marsRover |
 	marsRover := MarsRover at: 0@0 facing: norte.
-	marsRover executeCommands: 'r'.
-	self assert: marsRover direction equals: este.! !
+	self sendCommands: 'r' to: marsRover andAssertPositionIs: (0@0) andDirectionIs: este.! !
 
-!MarsRoverTests methodsFor: 'tests' stamp: 'MS 5/31/2022 23:19:39'!
+!MarsRoverTests methodsFor: 'valid command executing' stamp: 'MS 6/2/2022 15:00:39'!
 test09MarsRoverCanRotateRightTwoTimesAndFacesTheOppositeDirection
 	| marsRover |
 	marsRover := MarsRover at: 0@0 facing: sur.
-	marsRover executeCommands: 'rr'.
-	self assert: marsRover direction equals: norte.! !
+	self sendCommands: 'rr' to: marsRover andAssertPositionIs: (0@0) andDirectionIs: norte.! !
 
-!MarsRoverTests methodsFor: 'tests' stamp: 'MS 5/31/2022 23:20:07'!
+!MarsRoverTests methodsFor: 'valid command executing' stamp: 'MS 6/2/2022 15:01:22'!
 test10MarsRoverCanRotateAndGoForward
 	| marsRover |
-	marsRover := MarsRover at: 0@0 facing: sur.
-	marsRover executeCommands: 'rf'.
-	self assert: marsRover position equals: -1@0.! !
+	marsRover := MarsRover at: 0@0 facing: sur.	
+	self sendCommands: 'rf' to: marsRover andAssertPositionIs: (-1@0) andDirectionIs: oeste.! !
 
-!MarsRoverTests methodsFor: 'tests' stamp: 'MS 5/31/2022 23:20:41'!
+
+
+!MarsRoverTests methodsFor: 'initialization' stamp: 'IS 5/31/2022 23:00:33'!
+setUp
+	norte := North new.
+	sur := South new.
+	este := East new.
+	oeste := West new.
+				! !
+
+
+!MarsRoverTests methodsFor: 'private' stamp: 'MS 6/2/2022 14:56:21'!
+sendCommands: aStringOfCommands to: aMarsRover andAssertPositionIs: aPosition andDirectionIs: aMarsRoverDirection 
+	
+	aMarsRover executeCommands: aStringOfCommands.
+	
+	self assert: aMarsRover position equals: aPosition.
+	self assert: aMarsRover direction equals: aMarsRoverDirection.! !
+
+
+!MarsRoverTests methodsFor: 'invalid command executing' stamp: 'MS 5/31/2022 23:20:41'!
 test11MarsRoverStopsExecutionWhenReceivingInvalidCommand
 	| marsRover |
 	marsRover := MarsRover at: 0@0 facing: sur.
@@ -83,15 +99,6 @@ test11MarsRoverStopsExecutionWhenReceivingInvalidCommand
 			self assert: anError messageText = MarsRover invalidCommandErrorDescription ].
 		
 	self assert: marsRover position equals: 0@0.! !
-
-
-!MarsRoverTests methodsFor: 'initialization' stamp: 'IS 5/31/2022 23:00:33'!
-setUp
-	norte := North new.
-	sur := South new.
-	este := East new.
-	oeste := West new.
-				! !
 
 
 !classDefinition: #MarsRover category: 'Mars-Rover'!
@@ -122,16 +129,12 @@ assertValidCommand: aCharacter
 	]! !
 
 
-!MarsRover methodsFor: 'private' stamp: 'IS 5/31/2022 22:52:08'!
+!MarsRover methodsFor: 'private' stamp: 'MS 6/2/2022 15:05:31'!
 executeCommand: aCharacter 
 	(aCharacter = $f) ifTrue: [ self goForward ].
 	(aCharacter = $b) ifTrue: [ self goBackwards ].
-	(aCharacter = $l) ifTrue: [ 
-		direction := direction left
-	].
-	(aCharacter = $r) ifTrue: [ 
-		direction := direction right. 
-	 ].! !
+	(aCharacter = $l) ifTrue: [ 		self rotateLeft	 ].
+	(aCharacter = $r) ifTrue: [ 		self rotateRight. 	 ].! !
 
 !MarsRover methodsFor: 'private' stamp: 'IS 5/31/2022 22:48:04'!
 goBackwards
@@ -141,6 +144,16 @@ goBackwards
 !MarsRover methodsFor: 'private' stamp: 'IS 5/31/2022 22:49:27'!
 goForward
 	^ position := position + direction forward! !
+
+!MarsRover methodsFor: 'private' stamp: 'MS 6/2/2022 15:04:54'!
+rotateLeft
+
+	^ direction := direction left! !
+
+!MarsRover methodsFor: 'private' stamp: 'MS 6/2/2022 15:05:04'!
+rotateRight
+
+	^ direction := direction right! !
 
 
 !MarsRover methodsFor: 'command execution' stamp: 'IS 5/31/2022 23:04:24'!
