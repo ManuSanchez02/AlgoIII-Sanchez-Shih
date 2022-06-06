@@ -5,6 +5,20 @@ TestCase subclass: #ReceptiveAccountTest
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
+!ReceptiveAccountTest methodsFor: 'transfer tests' stamp: 'MS 6/6/2022 13:00:01'!
+test08
+	| extractionAccount depositAccount transfer |
+	
+	extractionAccount := ReceptiveAccount new.
+	depositAccount := ReceptiveAccount new.
+	
+	transfer := Transfer register: 100 from: extractionAccount to: depositAccount.
+	
+	self assert: 100*peso equals: transfer value.
+		
+	! !
+
+
 !ReceptiveAccountTest methodsFor: 'tests' stamp: 'LL 7/1/2021 03:10:43'!
 test01ReceptiveAccountHaveZeroAsBalanceWhenCreated 
 
@@ -15,7 +29,7 @@ test01ReceptiveAccountHaveZeroAsBalanceWhenCreated
 	self assert: 0 equals: account balance
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'LL 7/1/2021 03:14:20'!
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'MS 6/6/2022 12:59:49'!
 test02DepositIncreasesBalanceOnTransactionValue 
 
 	| account |
@@ -232,3 +246,31 @@ register: aTransaction
 transactions 
 
 	^ transactions copy! !
+
+
+!classDefinition: #Transfer category: 'ServiciosFinancieros-Ejercicio'!
+Object subclass: #Transfer
+	instanceVariableNames: 'value extractionAccount depositAccount'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Ejercicio'!
+
+!Transfer methodsFor: 'value' stamp: 'MS 6/6/2022 13:01:56'!
+value
+	^100*peso! !
+
+
+!Transfer methodsFor: 'initialization' stamp: 'MS 6/6/2022 14:23:28'!
+initializeRegister: aValue from: anExtractionAccount to: aDepositAccount 
+
+! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Transfer class' category: 'ServiciosFinancieros-Ejercicio'!
+Transfer class
+	instanceVariableNames: ''!
+
+!Transfer class methodsFor: 'instance creation' stamp: 'MS 6/6/2022 13:00:57'!
+register: aValue from: anExtractionAccount to: aDepositAccount 
+	^self new initializeRegister: aValue from: anExtractionAccount to: aDepositAccount ! !
