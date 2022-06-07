@@ -1,23 +1,116 @@
+!classDefinition: #PortfolioTest category: 'ServiciosFinancieros-Ejercicio'!
+TestCase subclass: #PortfolioTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Ejercicio'!
+
+!PortfolioTest methodsFor: 'tests' stamp: 'IS 6/6/2022 21:03:01'!
+test01EmptyPortfolioHasZeroBalance
+	| portfolio |
+	
+	portfolio := Portfolio with: {}.
+	
+	
+	self assert: 0*peso equals: portfolio balance.! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'IS 6/6/2022 21:03:12'!
+test02PortfolioWithOneAccountHasSameBalanceAsAccount
+	| portfolio anAccount |
+	
+	anAccount := ReceptiveAccount new.
+	Deposit register: 100*peso on: anAccount.
+	
+	portfolio := Portfolio with: {anAccount}.
+	
+	
+	self assert: anAccount balance equals: portfolio balance.! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'IS 6/6/2022 21:07:28'!
+test03PortfolioWithMultipleAccountsHasSameBalanceAsSumOfAccountBalances
+	| portfolio anAccount aSecondAccount aThirdAccount |
+	
+	anAccount := ReceptiveAccount new.
+	aSecondAccount := ReceptiveAccount new.
+	aThirdAccount := ReceptiveAccount new.
+	Deposit register: 100*peso on: anAccount.
+	Deposit register: 200*peso on: aSecondAccount.
+	Deposit register: 130*peso on: aThirdAccount.
+	
+	portfolio := Portfolio with: {anAccount. aSecondAccount. aThirdAccount}.
+	
+	
+	self assert: 430*peso equals: portfolio balance.! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'IS 6/6/2022 21:13:26'!
+test04PortfolioWithAccountAndPortfolioHasSameBalanceAsSumOfAllAccountBalances
+	| aPortfolio anotherPortfolio anAccount aSecondAccount aThirdAccount |
+	
+	anAccount := ReceptiveAccount new.
+	aSecondAccount := ReceptiveAccount new.
+	aThirdAccount := ReceptiveAccount new.
+	Deposit register: 100*peso on: anAccount.
+	Deposit register: 200*peso on: aSecondAccount.
+	Deposit register: 130*peso on: aThirdAccount.
+	
+	aPortfolio := Portfolio with: {anAccount. aSecondAccount }.
+	anotherPortfolio := Portfolio with: {aPortfolio. aThirdAccount}.
+	
+	self assert: 430*peso equals: anotherPortfolio balance.! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'IS 6/6/2022 21:22:17'!
+test05PortfolioWithNoAccountsHasNoTransactionsRegistered
+
+	| aPortfolio anAccount aDeposit |
+	
+	anAccount := ReceptiveAccount new.
+	aPortfolio := Portfolio with: {}.
+	aDeposit := Deposit register: 20*peso on: anAccount.
+	
+	self assert: false equals: (aPortfolio hasTransactionRegistered: aDeposit).! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'IS 6/6/2022 21:23:14'!
+test06PortfolioWithAccountThatHasTransactionHasItRegistered
+
+	| aPortfolio anAccount aDeposit |
+	
+	anAccount := ReceptiveAccount new.
+	aDeposit := Deposit register: 20*peso on: anAccount.
+	aPortfolio := Portfolio with: {anAccount }.
+	
+	self assert: true equals: (aPortfolio hasTransactionRegistered: aDeposit).! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'IS 6/6/2022 21:29:33'!
+test07PortfolioWithOneAccountThatHasNoTransactionsHasNoTransactionsRegistered
+
+	| aPortfolio anAccount aDeposit anotherAccount |
+	
+	anAccount := ReceptiveAccount new.
+	anotherAccount := ReceptiveAccount new.
+	aDeposit := Deposit register: 20*peso on: anotherAccount.
+	aPortfolio := Portfolio with: {anAccount}.
+	
+	self deny: (aPortfolio hasTransactionRegistered: aDeposit).! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'IS 6/6/2022 21:31:02'!
+test08PortfolioWithMultipleAccountsHasTransactionRegistered
+
+	| aPortfolio anAccount aDeposit anotherAccount |
+	
+	anAccount := ReceptiveAccount new.
+	anotherAccount := ReceptiveAccount new.
+	aDeposit := Deposit register: 20*peso on: anotherAccount.
+	aPortfolio := Portfolio with: {anAccount. anotherAccount}.
+	
+	self assert: true equals: (aPortfolio hasTransactionRegistered: aDeposit).! !
+
+
 !classDefinition: #ReceptiveAccountTest category: 'ServiciosFinancieros-Ejercicio'!
 TestCase subclass: #ReceptiveAccountTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
-
-!ReceptiveAccountTest methodsFor: 'transfer tests' stamp: 'MS 6/6/2022 13:00:01'!
-test08
-	| extractionAccount depositAccount transfer |
-	
-	extractionAccount := ReceptiveAccount new.
-	depositAccount := ReceptiveAccount new.
-	
-	transfer := Transfer register: 100 from: extractionAccount to: depositAccount.
-	
-	self assert: 100*peso equals: transfer value.
-		
-	! !
-
 
 !ReceptiveAccountTest methodsFor: 'tests' stamp: 'LL 7/1/2021 03:10:43'!
 test01ReceptiveAccountHaveZeroAsBalanceWhenCreated 
@@ -101,6 +194,69 @@ test07AccountKnowsItsTransactions
 	self assert: 1 equals: account transactions size.
 	self assert: (account transactions includes: deposit).
 ! !
+
+
+!classDefinition: #TransferTest category: 'ServiciosFinancieros-Ejercicio'!
+TestCase subclass: #TransferTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Ejercicio'!
+
+
+!TransferTest methodsFor: 'tests' stamp: 'IS 6/6/2022 20:43:19'!
+test01TransferValueIsCorrect
+	| extractionAccount depositAccount transfer |
+	
+	extractionAccount := ReceptiveAccount new.
+	depositAccount := ReceptiveAccount new.
+	
+	transfer := Transfer register: 100*peso from: extractionAccount to: depositAccount.
+	
+	self assert: 100*peso equals: transfer value.
+		
+	! !
+
+!TransferTest methodsFor: 'tests' stamp: 'IS 6/6/2022 20:43:23'!
+test02TransferCanNotBeCreatedWithZeroValue
+	| extractionAccount depositAccount |
+	
+	extractionAccount := ReceptiveAccount new.
+	depositAccount := ReceptiveAccount new.
+	
+	self should: [Transfer register: 0*peso from: extractionAccount to: depositAccount.]
+		raise: Error - MessageNotUnderstood
+		withExceptionDo: [:anError | anError messageText = Transfer invalidValueTransferErrorDescription] 
+		
+		
+	! !
+
+!TransferTest methodsFor: 'tests' stamp: 'IS 6/6/2022 20:43:02'!
+test03TransferCanNotBeCreatedWithNegativeValue
+	| extractionAccount depositAccount |
+	
+	extractionAccount := ReceptiveAccount new.
+	depositAccount := ReceptiveAccount new.
+	
+	self should: [Transfer register: -100*peso from: extractionAccount to: depositAccount.]
+		raise: Error - MessageNotUnderstood
+		withExceptionDo: [:anError | anError messageText = Transfer invalidValueTransferErrorDescription] 
+		
+		
+	! !
+
+!TransferTest methodsFor: 'tests' stamp: 'IS 6/6/2022 20:47:30'!
+test04TransferCanNotBeBetweenTheSameAccounts
+	| anAccount |
+	
+	anAccount := ReceptiveAccount new.
+	
+	self should: [Transfer register: 50*peso from: anAccount to: anAccount.]
+		raise: Error - MessageNotUnderstood
+		withExceptionDo: [:anError | anError messageText = Transfer invalidTransferAccountsErrorDescription ] 
+		
+		
+	! !
 
 
 !classDefinition: #AccountTransaction category: 'ServiciosFinancieros-Ejercicio'!
@@ -206,6 +362,40 @@ for: aValue
 	^ self new initializeFor: aValue ! !
 
 
+!classDefinition: #Portfolio category: 'ServiciosFinancieros-Ejercicio'!
+Object subclass: #Portfolio
+	instanceVariableNames: 'arrayOfPortfoliosAndAccounts accounts'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Ejercicio'!
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'IS 6/6/2022 21:12:33'!
+balance
+	
+	^accounts sum: [:anAccountOrPortfolio | anAccountOrPortfolio balance ] ifEmpty: [0*peso].! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'IS 6/6/2022 21:33:37'!
+hasTransactionRegistered: aTransaction
+
+	^accounts anySatisfy: [:anAccount | anAccount hasRegistered: aTransaction ].! !
+
+
+!Portfolio methodsFor: 'initialization' stamp: 'IS 6/6/2022 20:56:43'!
+initializeWith: anArrayOfPortfoliosAndAccounts 
+	accounts := anArrayOfPortfoliosAndAccounts.
+! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Portfolio class' category: 'ServiciosFinancieros-Ejercicio'!
+Portfolio class
+	instanceVariableNames: ''!
+
+!Portfolio class methodsFor: 'instance creation' stamp: 'IS 6/6/2022 20:55:17'!
+with: anArrayOfPortfoliosAndAccounts 
+	^self new initializeWith: anArrayOfPortfoliosAndAccounts ! !
+
+
 !classDefinition: #ReceptiveAccount category: 'ServiciosFinancieros-Ejercicio'!
 Object subclass: #ReceptiveAccount
 	instanceVariableNames: 'transactions'
@@ -260,7 +450,7 @@ value
 	^100*peso! !
 
 
-!Transfer methodsFor: 'initialization' stamp: 'MS 6/6/2022 14:23:28'!
+!Transfer methodsFor: 'initialization' stamp: 'IS 6/6/2022 20:40:31'!
 initializeRegister: aValue from: anExtractionAccount to: aDepositAccount 
 
 ! !
@@ -271,6 +461,28 @@ initializeRegister: aValue from: anExtractionAccount to: aDepositAccount
 Transfer class
 	instanceVariableNames: ''!
 
-!Transfer class methodsFor: 'instance creation' stamp: 'MS 6/6/2022 13:00:57'!
-register: aValue from: anExtractionAccount to: aDepositAccount 
+!Transfer class methodsFor: 'instance creation' stamp: 'IS 6/6/2022 20:49:00'!
+assertAccount: anAccount isDifferentFrom: anotherAccount
+
+	^ (anAccount = anotherAccount) ifTrue: [self error: self invalidTransferAccountsErrorDescription.]! !
+
+!Transfer class methodsFor: 'instance creation' stamp: 'IS 6/6/2022 20:44:26'!
+assertValueIsValid: aValue
+
+	^ (aValue <= (0*peso)) ifTrue: [self error: self invalidValueTransferErrorDescription.]! !
+
+!Transfer class methodsFor: 'instance creation' stamp: 'IS 6/6/2022 20:41:58'!
+register: aValue from: anExtractionAccount to: aDepositAccount
+
+	self assertValueIsValid: aValue.
+
 	^self new initializeRegister: aValue from: anExtractionAccount to: aDepositAccount ! !
+
+
+!Transfer class methodsFor: 'error handling' stamp: 'IS 6/6/2022 20:46:48'!
+invalidTransferAccountsErrorDescription
+	^'Extraction account and deposit account cant be the same account'.! !
+
+!Transfer class methodsFor: 'error handling' stamp: 'IS 6/6/2022 20:27:22'!
+invalidValueTransferErrorDescription
+	^'Value cant be negative or zero'.! !
