@@ -460,17 +460,17 @@ balance
 hasRegistered: aTransactionToVerify
 	self subclassResponsibility.! !
 
-!Account methodsFor: 'main protocol' stamp: 'MS 6/9/2022 15:53:45'!
-includes: anAccountToAdd
-	self subclassResponsibility.! !
-
 !Account methodsFor: 'main protocol' stamp: 'MS 6/8/2022 22:18:03'!
 transactions
 	self subclassResponsibility.! !
 
 
-!Account methodsFor: 'comparing' stamp: 'MS 6/9/2022 16:34:23'!
-isOrIncludes
+!Account methodsFor: 'comparing' stamp: 'MS 6/9/2022 15:53:45'!
+includes: anAccountToAdd
+	self subclassResponsibility.! !
+
+!Account methodsFor: 'comparing' stamp: 'MS 6/9/2022 16:42:04'!
+isOrIncludes: anAccountToCheck
 	self subclassResponsibility.! !
 
 
@@ -481,7 +481,7 @@ Account subclass: #Portfolio
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-!Portfolio methodsFor: 'main protocol' stamp: 'MS 6/9/2022 16:18:50'!
+!Portfolio methodsFor: 'private' stamp: 'MS 6/9/2022 16:18:50'!
 accounts
 	| auxiliaryAccountCollection | 
 	auxiliaryAccountCollection := OrderedCollection new.
@@ -489,6 +489,7 @@ accounts
 	^accounts do: [:anAccount | auxiliaryAccountCollection addAll: anAccount accounts].
 	
 ! !
+
 
 !Portfolio methodsFor: 'main protocol' stamp: 'MS 6/9/2022 15:53:08'!
 add: anAccountToAdd
@@ -508,12 +509,6 @@ hasRegistered: aTransactionToVerify
 
 	^accounts anySatisfy: [:anAccount | anAccount hasRegistered: aTransactionToVerify ].! !
 
-!Portfolio methodsFor: 'main protocol' stamp: 'MS 6/9/2022 16:32:19'!
-includes: anAccountToCheck
-	
-	^(accounts anySatisfy: [:anAccount | anAccount IsOrIncludes: anAccountToCheck ]) 
-! !
-
 !Portfolio methodsFor: 'main protocol' stamp: 'MS 6/8/2022 22:05:42'!
 transactions
 	| transactions |
@@ -530,23 +525,29 @@ initializeWith: anArrayOfAccounts
 ! !
 
 
-!Portfolio methodsFor: 'comparing' stamp: 'MS 6/9/2022 16:31:54'!
-IsOrIncludes: anAccount
+!Portfolio methodsFor: 'comparing' stamp: 'MS 6/9/2022 16:52:30'!
+includes: anAccountToCheck
+	
+	^(accounts anySatisfy: [:anAccount | anAccount isOrIncludes: anAccountToCheck ]) 
+! !
 
-	^(anAccount == self) or: (self includes: anAccount)! !
+!Portfolio methodsFor: 'comparing' stamp: 'MS 6/9/2022 16:52:30'!
+isOrIncludes: anAccountToCheck
+
+	^(anAccountToCheck == self) or: (self includes: anAccountToCheck)! !
 
 
-!Portfolio methodsFor: 'asserting' stamp: 'MS 6/9/2022 16:33:48'!
+!Portfolio methodsFor: 'asserting' stamp: 'MS 6/9/2022 16:52:30'!
 assertAccountToAddDoesNotInvolveSelf: anAccountToAdd
 
-	(anAccountToAdd IsOrIncludes: self) ifTrue: [self error: self class addingSelfErrorDescription ].
+	(anAccountToAdd isOrIncludes: self) ifTrue: [self error: self class addingSelfErrorDescription ].
 
 ! !
 
-!Portfolio methodsFor: 'asserting' stamp: 'MS 6/9/2022 16:21:23'!
+!Portfolio methodsFor: 'asserting' stamp: 'MS 6/9/2022 16:57:52'!
 assertAccountToAddIsNotAlreadyInPortfolio: anAccountToAdd
 
-	(self accounts includesAnyOf: anAccountToAdd accounts) ifTrue: [self error: self class repeatedAccountErrorDescription ]! !
+	(accounts anySatisfy: [:anAccount | anAccountToAdd isOrIncludes: anAccount ]) ifTrue: [self error: self class repeatedAccountErrorDescription ].! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -558,12 +559,7 @@ Portfolio class
 addingSelfErrorDescription
 	^'Can not add portfolio in itself.'! !
 
-!Portfolio class methodsFor: 'error handling' stamp: 'MS 6/9/2022 14:24:00'!
-repeatedAccountErrorDescription
-	^'Account is already in the portfolio'! !
-
-
-!Portfolio class methodsFor: 'instance creation' stamp: 'MS 6/9/2022 15:55:15'!
+!Portfolio class methodsFor: 'error handling' stamp: 'MS 6/9/2022 17:08:13'!
 assertAccountsAreNotRepeated: anArrayOfAccounts
 
 	| auxiliaryCollectionOfAccounts |
@@ -571,6 +567,11 @@ assertAccountsAreNotRepeated: anArrayOfAccounts
 	auxiliaryCollectionOfAccounts := OrderedCollection new.
 	anArrayOfAccounts do: [:anAccount | auxiliaryCollectionOfAccounts addAll: anAccount accounts].
 	(auxiliaryCollectionOfAccounts asSet size = auxiliaryCollectionOfAccounts size) ifFalse: [self error: self repeatedAccountErrorDescription ]! !
+
+!Portfolio class methodsFor: 'error handling' stamp: 'MS 6/9/2022 14:24:00'!
+repeatedAccountErrorDescription
+	^'Account is already in the portfolio'! !
+
 
 !Portfolio class methodsFor: 'instance creation' stamp: 'MS 6/9/2022 15:55:16'!
 with: anArrayOfAccounts 
@@ -593,10 +594,6 @@ initialize
 	transactions := OrderedCollection new.! !
 
 
-!ReceptiveAccount methodsFor: 'main protocol' stamp: 'MS 6/9/2022 15:48:08'!
-accounts
-	^OrderedCollection with: self.! !
-
 !ReceptiveAccount methodsFor: 'main protocol' stamp: 'MS 6/8/2022 23:38:04'!
 balance
 	^transactions inject: 0*peso into: [:aBalance :aTransaction | aTransaction beAddedTo: aBalance. ] 
@@ -608,11 +605,6 @@ hasRegistered: aTransactionToVerify
 
 	^ transactions includes: aTransactionToVerify 
 ! !
-
-!ReceptiveAccount methodsFor: 'main protocol' stamp: 'MS 6/9/2022 15:20:05'!
-includes: anAccountToCheck
-	
-	^anAccountToCheck == self.! !
 
 !ReceptiveAccount methodsFor: 'main protocol' stamp: 'MS 6/9/2022 16:17:35'!
 register: aTransactionToRegister
@@ -626,10 +618,20 @@ transactions
 	^ transactions copy! !
 
 
-!ReceptiveAccount methodsFor: 'comparing' stamp: 'MS 6/9/2022 16:33:10'!
-IsOrIncludes: anAccount
+!ReceptiveAccount methodsFor: 'private' stamp: 'MS 6/9/2022 15:48:08'!
+accounts
+	^OrderedCollection with: self.! !
 
-	^anAccount == self.! !
+
+!ReceptiveAccount methodsFor: 'comparing' stamp: 'MS 6/9/2022 15:20:05'!
+includes: anAccountToCheck
+	
+	^anAccountToCheck == self.! !
+
+!ReceptiveAccount methodsFor: 'comparing' stamp: 'MS 6/9/2022 16:52:30'!
+isOrIncludes: anAccountToCheck
+
+	^anAccountToCheck == self.! !
 
 
 !classDefinition: #AccountTransaction category: 'ServiciosFinancieros-Ejercicio'!
