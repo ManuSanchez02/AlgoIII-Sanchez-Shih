@@ -465,10 +465,6 @@ transactions
 	self subclassResponsibility.! !
 
 
-!Account methodsFor: 'comparing' stamp: 'MS 6/9/2022 15:53:45'!
-includes: anAccountToAdd
-	self subclassResponsibility.! !
-
 !Account methodsFor: 'comparing' stamp: 'MS 6/9/2022 16:42:04'!
 isOrIncludes: anAccountToCheck
 	self subclassResponsibility.! !
@@ -622,11 +618,6 @@ transactions
 accounts
 	^OrderedCollection with: self.! !
 
-
-!ReceptiveAccount methodsFor: 'comparing' stamp: 'MS 6/9/2022 15:20:05'!
-includes: anAccountToCheck
-	
-	^anAccountToCheck == self.! !
 
 !ReceptiveAccount methodsFor: 'comparing' stamp: 'MS 6/9/2022 16:52:30'!
 isOrIncludes: anAccountToCheck
