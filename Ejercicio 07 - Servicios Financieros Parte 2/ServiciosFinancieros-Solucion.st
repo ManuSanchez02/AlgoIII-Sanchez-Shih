@@ -1,77 +1,68 @@
 !classDefinition: #AccountSummaryTests category: 'ServiciosFinancieros-Solucion'!
 TestCase subclass: #AccountSummaryTests
-	instanceVariableNames: ''
+	instanceVariableNames: 'anAccount aReceiverAccount aSenderAccount anotherAccount'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!AccountSummaryTests methodsFor: 'tests' stamp: 'IS 6/13/2022 20:57:31'!
-test01AccountWithNoTransactionsHasZeroBalanceInAccountSummary
-	| anAccount expectedSummary summary |
-	
+!AccountSummaryTests methodsFor: 'setUp/tearDown' stamp: 'MS 6/16/2022 17:38:12'!
+setUp
 	anAccount := ReceptiveAccount new.
-	expectedSummary := OrderedCollection with: 'Balance = 0 * pesos'.
-	summary := AccountSummary for: anAccount.
-	
-	self assert: expectedSummary equals: summary generate.! !
-
-!AccountSummaryTests methodsFor: 'tests' stamp: 'MS 6/12/2022 19:47:18'!
-test02ReceptiveAccountWithDepositHasDepositAndBalanceInAccountSummary
-	| anAccount expectedSummary summary |
-	
-	anAccount := ReceptiveAccount new.
-	Deposit register: 20*peso on: anAccount.
-	
-	expectedSummary := OrderedCollection with: 'Depósito por 20 * pesos' with: 'Balance = 20 * pesos'.
-	summary := AccountSummary for: anAccount.
-	
-	self assert: expectedSummary equals: summary generate.! !
-
-!AccountSummaryTests methodsFor: 'tests' stamp: 'MS 6/12/2022 19:47:10'!
-test03ReceptiveAccountWithWithdrawHasWithdrawAndBalanceInAccountSummary
-	| anAccount expectedSummary summary |
-	
-	anAccount := ReceptiveAccount new.
-	Withdraw register: 30*peso on: anAccount.
-	
-	expectedSummary := OrderedCollection with: 'Extracción por 30 * pesos' with: 'Balance = -30 * pesos'.
-	summary := AccountSummary for: anAccount.
-	
-	self assert: expectedSummary equals: summary generate.! !
-
-!AccountSummaryTests methodsFor: 'tests' stamp: 'MS 6/12/2022 19:47:14'!
-test04ReceptiveAccountWithOutgoingTransferHasOutgoingTransferAndBalanceInAccountSummary
-	| aSenderAccount aReceiverAccount expectedSummary summary |
-	
+	anotherAccount := ReceptiveAccount new.
 	aReceiverAccount := ReceptiveAccount new.
-	aSenderAccount := ReceptiveAccount new.
+	aSenderAccount := ReceptiveAccount new.! !
+
+
+!AccountSummaryTests methodsFor: 'tests' stamp: 'MS 6/16/2022 17:43:25'!
+test01AccountWithNoTransactionsHasZeroBalanceInAccountSummary
+	| expectedSummary |
+
+	expectedSummary := OrderedCollection with: 'Balance = 0 * pesos'.
+	
+	self assertAccountSummaryFor: anAccount is: expectedSummary.! !
+
+!AccountSummaryTests methodsFor: 'tests' stamp: 'MS 6/16/2022 17:43:17'!
+test02ReceptiveAccountWithDepositHasDepositAndBalanceInAccountSummary
+	| expectedSummary |
+	
+	Deposit register: 20*peso on: anAccount.
+	expectedSummary := OrderedCollection with: 'Depósito por 20 * pesos' with: 'Balance = 20 * pesos'.
+	
+	self assertAccountSummaryFor: anAccount is: expectedSummary.! !
+
+!AccountSummaryTests methodsFor: 'tests' stamp: 'MS 6/16/2022 17:42:59'!
+test03ReceptiveAccountWithWithdrawHasWithdrawAndBalanceInAccountSummary
+	| expectedSummary |
+	
+	Withdraw register: 30*peso on: anAccount.
+	expectedSummary := OrderedCollection with: 'Extracción por 30 * pesos' with: 'Balance = -30 * pesos'.
+
+	self assertAccountSummaryFor: anAccount is: expectedSummary.! !
+
+!AccountSummaryTests methodsFor: 'tests' stamp: 'MS 6/16/2022 17:42:44'!
+test04ReceptiveAccountWithOutgoingTransferHasOutgoingTransferAndBalanceInAccountSummary
+	| expectedSummary |
+	
 	Transfer amount: 20*peso from: aSenderAccount to: aReceiverAccount.
 		
 	expectedSummary := OrderedCollection with: 'Salida por transferencia de 20 * pesos' with: 'Balance = -20 * pesos'.
-	summary := AccountSummary for: aSenderAccount .
 	
-	self assert: expectedSummary equals: summary generate.! !
+	self assertAccountSummaryFor: aSenderAccount is: expectedSummary.! !
 
-!AccountSummaryTests methodsFor: 'tests' stamp: 'MS 6/12/2022 19:47:05'!
+!AccountSummaryTests methodsFor: 'tests' stamp: 'MS 6/16/2022 17:41:42'!
 test05ReceptiveAccountWithIncomingTransferHasIncomingTransferAndBalanceInAccountSummary
-	| aSenderAccount aReceiverAccount expectedSummary summary |
+	| expectedSummary |
 	
-	aReceiverAccount := ReceptiveAccount new.
-	aSenderAccount := ReceptiveAccount new.
 	Transfer amount: 30*peso from: aSenderAccount to: aReceiverAccount.
 		
 	expectedSummary := OrderedCollection with: 'Entrada por transferencia de 30 * pesos' with: 'Balance = 30 * pesos'.
-	summary := AccountSummary for: aReceiverAccount.
 	
-	self assert: expectedSummary equals: summary generate.! !
+	self assertAccountSummaryFor: aReceiverAccount is: expectedSummary ! !
 
-!AccountSummaryTests methodsFor: 'tests' stamp: 'MS 6/12/2022 19:47:00'!
+!AccountSummaryTests methodsFor: 'tests' stamp: 'MS 6/16/2022 17:41:15'!
 test06ReceptiveAccountWithMultipleTransactionsHasThemIncludedInSummary
-	| anAccount anotherAccount expectedSummary summary |
-	
-	anAccount := ReceptiveAccount new.
-	anotherAccount := ReceptiveAccount new.
-	
+	| expectedSummary |
+
 	Deposit register: 30*peso on: anAccount.
 	Withdraw register: 20*peso on: anAccount.
 	Transfer amount: 50*peso from: anAccount to: anotherAccount.
@@ -85,20 +76,16 @@ test06ReceptiveAccountWithMultipleTransactionsHasThemIncludedInSummary
 		'Balance = 60 * pesos'.
 	}.
 	
-	summary := AccountSummary for: anAccount.
-	
-	self assert: expectedSummary equals: summary generate.! !
+	self assertAccountSummaryFor: anAccount is: expectedSummary.! !
 
-!AccountSummaryTests methodsFor: 'tests' stamp: 'IS 6/13/2022 20:31:56'!
+!AccountSummaryTests methodsFor: 'tests' stamp: 'MS 6/16/2022 17:40:52'!
 test07PortfolioWithMultipleTransactionsHasThemIncludedInSummary
-	| aPortfolio anAccount expectedSummary summary anotherAccount |
+	| aPortfolio expectedSummary |
 	
-	anAccount := ReceptiveAccount new.
-	anotherAccount := ReceptiveAccount new.
 	aPortfolio := Portfolio with: anAccount with: anotherAccount.
 	
-	Deposit register: 30*peso on: anAccount .
-	Withdraw register: 20*peso on: anAccount .
+	Deposit register: 30*peso on: anAccount.
+	Withdraw register: 20*peso on: anAccount.
 	Transfer amount: 50*peso from: anAccount to: anotherAccount.
 	Transfer amount: 100*peso from: anotherAccount to: anAccount.
 		
@@ -112,9 +99,13 @@ test07PortfolioWithMultipleTransactionsHasThemIncludedInSummary
 		'Balance = 10 * pesos'.
 	}.
 	
-	summary := AccountSummary for: aPortfolio.
+	self assertAccountSummaryFor: aPortfolio is: expectedSummary.! !
+
+
+!AccountSummaryTests methodsFor: 'asserting' stamp: 'MS 6/16/2022 17:48:06'!
+assertAccountSummaryFor: anAccountToBeReported is: anExpectedSummary
 	
-	self assert: expectedSummary equals: summary generate.! !
+	self assert: anExpectedSummary equals: (AccountSummary for: anAccountToBeReported) generate.! !
 
 
 !classDefinition: #PortfolioTest category: 'ServiciosFinancieros-Solucion'!
@@ -332,72 +323,233 @@ test15PortfolioCanNotIncludeAnyOfTheComposedAccountOfPortfolioToAdd
 
 !classDefinition: #PortfolioTreePrinterTests category: 'ServiciosFinancieros-Solucion'!
 TestCase subclass: #PortfolioTreePrinterTests
-	instanceVariableNames: 'indent'
+	instanceVariableNames: 'indent johnsEmptyPortfolio johnsAccount manusAccount mariasAccount angiesAccount myAccount johnsPortfolio mariasPortfolio'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!PortfolioTreePrinterTests methodsFor: 'setUp/tearDown' stamp: 'IS 6/16/2022 00:35:02'!
+!PortfolioTreePrinterTests methodsFor: 'setUp/tearDown' stamp: 'MS 6/16/2022 18:26:35'!
 setUp
-	indent := '    '! !
+	indent := '    '.
+	
+	johnsAccount := ReceptiveAccount named: 'Cuenta de Juan'.
+	manusAccount := ReceptiveAccount named: 'Cuenta de Manu'.
+	mariasAccount := ReceptiveAccount named: 'Cuenta de Maria'.
+	angiesAccount := ReceptiveAccount named: 'Cuenta de Angeles'.
+	myAccount := ReceptiveAccount named: 'Cuenta mia'.
+	
+	johnsEmptyPortfolio := Portfolio named: 'Portfolio de Juan'.
+	johnsPortfolio := Portfolio named: 'Portfolio de Juan' with: johnsAccount.
+	mariasPortfolio := Portfolio named: 'Portfolio de Maria' with: mariasAccount.! !
 
 
-!PortfolioTreePrinterTests methodsFor: 'tests' stamp: 'IS 6/16/2022 01:07:15'!
+!PortfolioTreePrinterTests methodsFor: 'asserting' stamp: 'MS 6/16/2022 18:27:08'!
+assertBriefTreePrintOfPortfolio: aPortfolioToBePrinted isEqualTo: aBriefPortfolioTreePrint
+
+	self assert: aBriefPortfolioTreePrint equals: (PortfolioBriefTreePrinter with: aPortfolioToBePrinted) generate.! !
+
+!PortfolioTreePrinterTests methodsFor: 'asserting' stamp: 'MS 6/16/2022 18:27:06'!
+assertDetailedTreePrintOfPortfolio: aPortfolioToBePrinted isEqualTo: aDetailedPortfolioTreePrint
+
+	self assert: aDetailedPortfolioTreePrint equals: (PortfolioDetailedTreePrinter with: aPortfolioToBePrinted) generate.! !
+
+
+!PortfolioTreePrinterTests methodsFor: 'detailed tree printer tests' stamp: 'MS 6/16/2022 18:25:54'!
+test01PortfolioDetailedTreePrinterOnlyPrintsEmptyPortfolioName
+
+	| expectedPortfolioStructure |
+
+	expectedPortfolioStructure := OrderedCollection with: 'Portfolio de Juan' with: indent, 'Balance = 0 * pesos'.
+	
+	self assertDetailedTreePrintOfPortfolio: johnsEmptyPortfolio isEqualTo: expectedPortfolioStructure.! !
+
+!PortfolioTreePrinterTests methodsFor: 'detailed tree printer tests' stamp: 'MS 6/16/2022 18:26:44'!
+test02PortfolioWithAccountAndNoTransactionsIsPrintedCorrectly
+	| expectedPortfolioStructure |
+
+	expectedPortfolioStructure := OrderedCollection newFrom: {
+		'Portfolio de Juan'.
+		indent,'Cuenta de Juan'.
+		indent,indent,'Balance = 0 * pesos'.
+		indent,'Balance = 0 * pesos'.
+	}.
+	
+	self assertDetailedTreePrintOfPortfolio: johnsPortfolio isEqualTo: expectedPortfolioStructure.! !
+
+!PortfolioTreePrinterTests methodsFor: 'detailed tree printer tests' stamp: 'MS 6/16/2022 18:27:25'!
+test03PortfolioWithPortfolioWithNoTransactionsIsPrintedCorrectly
+	| aPortfolio expectedPortfolioStructure |
+
+	aPortfolio := Portfolio named: 'Portfolio de la familia' with: mariasPortfolio.
+	
+	expectedPortfolioStructure := OrderedCollection newFrom: {
+		'Portfolio de la familia'.
+		indent,'Portfolio de Maria'.
+		indent,indent,'Cuenta de Maria'.
+		indent,indent,indent,'Balance = 0 * pesos'.
+		indent,indent,'Balance = 0 * pesos'.
+		indent,'Balance = 0 * pesos'.
+	}.
+	
+	self assertDetailedTreePrintOfPortfolio: aPortfolio isEqualTo: expectedPortfolioStructure.! !
+
+!PortfolioTreePrinterTests methodsFor: 'detailed tree printer tests' stamp: 'MS 6/16/2022 18:27:38'!
+test04PortfolioWithMultipleAccountsWithNoTransactionsIsPrintedCorrectly
+	| familysPortfolio expectedPortfolioStructure |
+
+	familysPortfolio := Portfolio named: 'Portfolio de la familia' with: manusAccount with: mariasPortfolio.
+	
+	expectedPortfolioStructure := OrderedCollection newFrom: {
+		'Portfolio de la familia'.
+		indent,'Cuenta de Manu'.
+		indent,indent,'Balance = 0 * pesos'.
+		indent,'Portfolio de Maria'.
+		indent,indent,'Cuenta de Maria'.
+		indent,indent,indent,'Balance = 0 * pesos'.
+		indent,indent,'Balance = 0 * pesos'.
+		indent,'Balance = 0 * pesos'.
+	}.
+	
+	self assertDetailedTreePrintOfPortfolio: familysPortfolio isEqualTo: expectedPortfolioStructure.! !
+
+!PortfolioTreePrinterTests methodsFor: 'detailed tree printer tests' stamp: 'MS 6/16/2022 18:27:47'!
+test05PortfolioWithAccountWithDepositIsPrintedCorrectly
+	| expectedPortfolioStructure |
+
+	Deposit register: 100*peso on: johnsAccount .
+	
+	expectedPortfolioStructure := OrderedCollection newFrom: {
+		'Portfolio de Juan'.
+		indent,'Cuenta de Juan'.
+		indent,indent,'Depósito por 100 * pesos'.
+		indent,indent,'Balance = 100 * pesos'.
+		indent,'Balance = 100 * pesos'.
+	}.
+	
+	self assertDetailedTreePrintOfPortfolio: johnsPortfolio isEqualTo: expectedPortfolioStructure.! !
+
+!PortfolioTreePrinterTests methodsFor: 'detailed tree printer tests' stamp: 'MS 6/16/2022 18:28:07'!
+test06PortfolioWithAccountWithWithdrawIsPrintedCorrectly
+	| expectedPortfolioStructure |
+
+	Withdraw register: 20*peso on: johnsAccount .
+	
+	expectedPortfolioStructure := OrderedCollection newFrom: {
+		'Portfolio de Juan'.
+		indent,'Cuenta de Juan'.
+		indent,indent,'Extracción por 20 * pesos'.
+		indent,indent,'Balance = -20 * pesos'.
+		indent,'Balance = -20 * pesos'.
+	}.
+	
+	self assertDetailedTreePrintOfPortfolio: johnsPortfolio isEqualTo: expectedPortfolioStructure.! !
+
+!PortfolioTreePrinterTests methodsFor: 'detailed tree printer tests' stamp: 'MS 6/16/2022 18:28:14'!
+test07PortfolioWithSenderAccountInTransferIsPrintedCorrectly
+	| expectedPortfolioStructure |
+
+	Transfer amount: 50*peso from: johnsAccount  to: mariasAccount .
+		
+	expectedPortfolioStructure := OrderedCollection newFrom: {
+		'Portfolio de Juan'.
+		indent,'Cuenta de Juan'.
+		indent,indent,'Salida por transferencia de 50 * pesos'.
+		indent,indent,'Balance = -50 * pesos'.
+		indent,'Balance = -50 * pesos'.
+	}.
+	
+	self assertDetailedTreePrintOfPortfolio: johnsPortfolio isEqualTo: expectedPortfolioStructure.! !
+
+!PortfolioTreePrinterTests methodsFor: 'detailed tree printer tests' stamp: 'MS 6/16/2022 18:28:21'!
+test08PortfolioWithReceivingAccountInTransferIsPrintedCorrectly
+	| expectedPortfolioStructure |
+
+	Transfer amount: 75*peso from: mariasAccount to: johnsAccount.
+		
+	expectedPortfolioStructure := OrderedCollection newFrom: {
+		'Portfolio de Juan'.
+		indent,'Cuenta de Juan'.
+		indent,indent,'Entrada por transferencia de 75 * pesos'.
+		indent,indent,'Balance = 75 * pesos'.
+		indent,'Balance = 75 * pesos'.
+	}.
+	
+	self assertDetailedTreePrintOfPortfolio: johnsPortfolio isEqualTo: expectedPortfolioStructure.! !
+
+!PortfolioTreePrinterTests methodsFor: 'detailed tree printer tests' stamp: 'MS 6/16/2022 18:28:43'!
+test09PortfolioWithMultipleAccountsAndTransactionsIsPrintedCorrectly
+	| familyPortfolio expectedPortfolioStructure childrenPortfolio |
+
+	childrenPortfolio := Portfolio named: 'Portfolio de hijos' with: johnsAccount with: angiesAccount. 
+
+	familyPortfolio := Portfolio named: 'Portfolio de la familia' with: myAccount with: childrenPortfolio.
+	
+	Deposit register: 20*peso on: myAccount.
+	Withdraw register: 70*peso on: myAccount.
+	Deposit register: 35*peso on: johnsAccount .
+	Withdraw register: 5*peso on: johnsAccount.
+	Transfer amount: 10*peso from: angiesAccount to: manusAccount .
+
+	expectedPortfolioStructure := OrderedCollection newFrom: {
+		'Portfolio de la familia'.
+		
+		indent,'Cuenta mia'.
+		indent,indent,'Depósito por 20 * pesos'.
+		indent,indent,'Extracción por 70 * pesos'.
+		indent,indent,'Balance = -50 * pesos'.
+		
+		indent,'Portfolio de hijos'.
+		indent,indent,'Cuenta de Juan'.
+		indent,indent,indent,'Depósito por 35 * pesos'.
+		indent,indent,indent,'Extracción por 5 * pesos'.
+		indent,indent,indent,'Balance = 30 * pesos'.
+		
+		indent,indent,'Cuenta de Angeles'.
+		indent,indent,indent,'Salida por transferencia de 10 * pesos'.
+		indent,indent,indent,'Balance = -10 * pesos'.
+		indent,indent,'Balance = 20 * pesos'.
+		
+		indent,'Balance = -30 * pesos'.
+	}.
+	
+	self assertDetailedTreePrintOfPortfolio: familyPortfolio isEqualTo: expectedPortfolioStructure.! !
+
+
+!PortfolioTreePrinterTests methodsFor: 'brief tree printer tests' stamp: 'MS 6/16/2022 18:29:35'!
 test01PortfolioTreePrinterOnlyPrintsEmptyPortfolioName
-	| aPortfolio expectedPortfolioStructure portfolioTreePrinter |
+	| expectedPortfolioStructure |
 
-	aPortfolio := Portfolio named: 'Portfolio de Juan'.
-	
 	expectedPortfolioStructure := OrderedCollection with: 'Portfolio de Juan'.
-	
-	portfolioTreePrinter := PortfolioTreePrinter with: aPortfolio.
-	
-	self assert: expectedPortfolioStructure equals: portfolioTreePrinter generate.
+	self assertBriefTreePrintOfPortfolio: johnsEmptyPortfolio isEqualTo: expectedPortfolioStructure.
 	
 	! !
 
-!PortfolioTreePrinterTests methodsFor: 'tests' stamp: 'IS 6/16/2022 01:07:38'!
+!PortfolioTreePrinterTests methodsFor: 'brief tree printer tests' stamp: 'MS 6/16/2022 18:30:05'!
 test02PortfolioTreePrinterPrintsPortfolioNameWithPortfolioAccount
-	| anAccount aPortfolio expectedPortfolioStructure portfolioTreePrinter |
+	| expectedPortfolioStructure |
 
-	anAccount := ReceptiveAccount named: 'Cuenta de Juan'.
-	aPortfolio := Portfolio named: 'Portfolio de Juan' with: anAccount .
-	
 	expectedPortfolioStructure := OrderedCollection with: 'Portfolio de Juan' with: indent,'Cuenta de Juan'.
-	
-	portfolioTreePrinter := PortfolioTreePrinter with: aPortfolio.
-	
-	self assert: expectedPortfolioStructure equals: portfolioTreePrinter generate.
+	self assertBriefTreePrintOfPortfolio: johnsPortfolio isEqualTo: expectedPortfolioStructure.
 	
 	! !
 
-!PortfolioTreePrinterTests methodsFor: 'tests' stamp: 'IS 6/16/2022 01:08:11'!
+!PortfolioTreePrinterTests methodsFor: 'brief tree printer tests' stamp: 'MS 6/16/2022 18:30:19'!
 test03PortfolioTreePrinterPrintsPortfolioNameWithPortfolioAccounts
-	| anAccount aPortfolio expectedPortfolioStructure portfolioTreePrinter anotherAccount |
+	| aPortfolio expectedPortfolioStructure |
 
-	anAccount := ReceptiveAccount named: 'Cuenta de Juan'.
-	anotherAccount := ReceptiveAccount named: 'Cuenta de Maria'.
-	aPortfolio := Portfolio named: 'Portfolio de Juan y Maria' with: anAccount with: anotherAccount .
-	
+	aPortfolio := Portfolio named: 'Portfolio de Juan y Maria' with: johnsAccount with: mariasAccount .
 	expectedPortfolioStructure := OrderedCollection with: 'Portfolio de Juan y Maria' with: indent,'Cuenta de Juan' with: indent,'Cuenta de Maria'.
 	
-	portfolioTreePrinter := PortfolioTreePrinter with: aPortfolio.
-	
-	self assert: expectedPortfolioStructure equals: portfolioTreePrinter generate.
+	self assertBriefTreePrintOfPortfolio: aPortfolio isEqualTo: expectedPortfolioStructure.
 	
 	! !
 
-!PortfolioTreePrinterTests methodsFor: 'tests' stamp: 'IS 6/16/2022 01:08:29'!
+!PortfolioTreePrinterTests methodsFor: 'brief tree printer tests' stamp: 'MS 6/16/2022 18:30:44'!
 test04NestedPortfolioIsPrintedCorrectly
-	| juanAccount aPortfolio expectedPortfolioStructure portfolioTreePrinter mariaAccount mariaPortfolio manuAccount |
-
-	juanAccount := ReceptiveAccount named: 'Cuenta de Juan'.
-	mariaAccount := ReceptiveAccount named: 'Cuenta de Maria'.
-	manuAccount := ReceptiveAccount named: 'Cuenta de Manu'.
+	| familysPortfolio expectedPortfolioStructure mariaAndManuPortfolio |
 	
-	mariaPortfolio := Portfolio named: 'Portfolio de Maria y Manu' with: mariaAccount with: manuAccount .
-	
-	aPortfolio := Portfolio named: 'Portfolio de Familia' with: juanAccount with: mariaPortfolio .
+	mariaAndManuPortfolio := Portfolio named: 'Portfolio de Maria y Manu' with: mariasAccount with: manusAccount .
+	familysPortfolio := Portfolio named: 'Portfolio de Familia' with: johnsAccount with: mariaAndManuPortfolio .
 	
 	expectedPortfolioStructure := OrderedCollection newFrom: {
 		'Portfolio de Familia'.
@@ -407,9 +559,7 @@ test04NestedPortfolioIsPrintedCorrectly
 		indent,indent,'Cuenta de Manu'.
 	}.
 	
-	portfolioTreePrinter := PortfolioTreePrinter with: aPortfolio.
-	
-	self assert: expectedPortfolioStructure equals: portfolioTreePrinter generate.
+	self assertBriefTreePrintOfPortfolio: familysPortfolio isEqualTo: expectedPortfolioStructure.
 	
 	! !
 
@@ -507,83 +657,76 @@ test07AccountKnowsItsTransactions
 
 !classDefinition: #TransferNetTests category: 'ServiciosFinancieros-Solucion'!
 TestCase subclass: #TransferNetTests
-	instanceVariableNames: ''
+	instanceVariableNames: 'anAccount anotherAccount aReceiverAccount2 aSenderAccount2 externalAccount'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!TransferNetTests methodsFor: 'tests' stamp: 'IS 6/16/2022 00:15:46'!
-test01AccountWithNoTransfersHasZeroTransferNetValue
-	| anAccount summary |
-	
-	anAccount := ReceptiveAccount new.
-	summary := TransferNet for: anAccount.
-	
-	self assert: 0 * peso equals: summary generate.! !
-
-!TransferNetTests methodsFor: 'tests' stamp: 'IS 6/16/2022 00:15:58'!
-test02AccountWithTransferDepositHasTransferValueAsTransferNetValue
-	| anAccount summary anotherAccount |
-	
-	anAccount := ReceptiveAccount new.
-	anotherAccount := ReceptiveAccount new.
-	
-	Transfer amount: 10 * peso from: anotherAccount to: anAccount .
-	summary := TransferNet for: anAccount.
-	
-	self assert: 10 * peso equals: summary generate.! !
-
-!TransferNetTests methodsFor: 'tests' stamp: 'IS 6/16/2022 00:16:08'!
-test03AccountWithTransferWithdrawHasNegativeTransferValueAsTransferNetValue
-	| anAccount summary anotherAccount |
-	
-	anAccount := ReceptiveAccount new.
-	anotherAccount := ReceptiveAccount new.
-	
-	Transfer amount: 10 * peso from: anAccount to: anotherAccount .
-	summary := TransferNet for: anAccount.
-	
-	self assert: -10 * peso equals: summary generate.! !
-
-!TransferNetTests methodsFor: 'tests' stamp: 'IS 6/16/2022 00:16:18'!
-test04AccountWithMultipleTransfersHasCorrectNetTransferValue
-	| anAccount summary anotherAccount |
-	
-	anAccount := ReceptiveAccount new.
-	anotherAccount := ReceptiveAccount new.
-	
-	Transfer amount: 10 * peso from: anAccount to: anotherAccount .
-	Transfer amount: 20 * peso from: anotherAccount to: anAccount .
-	summary := TransferNet for: anAccount.
-	
-	self assert: 10 * peso equals: summary generate.! !
-
-!TransferNetTests methodsFor: 'tests' stamp: 'IS 6/16/2022 00:16:28'!
-test05TransferNetIgnoresNonTransferTransactions
-	| anAccount summary |
-	
-	anAccount := ReceptiveAccount new.
-	
-	Deposit register: 400 * peso on: anAccount.
-	summary := TransferNet for: anAccount .
-	
-	self assert: 0 * peso equals: summary generate.! !
-
-!TransferNetTests methodsFor: 'tests' stamp: 'IS 6/16/2022 00:16:37'!
-test06PortfolioWithMultipleTransfersHasCorrectNetTransferValue
-	| anAccount summary anotherAccount aPortfolio externalAccount |
-	
+!TransferNetTests methodsFor: 'setUp/tearDown' stamp: 'MS 6/16/2022 17:46:38'!
+setUp
 	anAccount := ReceptiveAccount new.
 	anotherAccount := ReceptiveAccount new.
 	externalAccount := ReceptiveAccount new.
+! !
+
+
+!TransferNetTests methodsFor: 'asserting' stamp: 'MS 6/16/2022 17:53:49'!
+assertTransferNetFor: anAccountToBeReported equals: anExpectedValue.
+
+	self assert: anExpectedValue equals: (TransferNet for: anAccountToBeReported) generate.! !
+
+
+!TransferNetTests methodsFor: 'tests' stamp: 'MS 6/16/2022 17:48:30'!
+test01AccountWithNoTransfersHasZeroTransferNetValue
+
+	self assertTransferNetFor: anAccount equals: 0 * peso.! !
+
+!TransferNetTests methodsFor: 'tests' stamp: 'MS 6/16/2022 17:48:55'!
+test02AccountWithTransferDepositHasTransferValueAsTransferNetValue
+	
+	Transfer amount: 10 * peso from: anotherAccount to: anAccount .
+	
+	self assertTransferNetFor: anAccount equals: 10 * peso.! !
+
+!TransferNetTests methodsFor: 'tests' stamp: 'MS 6/16/2022 17:49:07'!
+test03AccountWithTransferWithdrawHasNegativeTransferValueAsTransferNetValue
+	
+	Transfer amount: 10 * peso from: anAccount to: anotherAccount .
+	
+	self assertTransferNetFor: anAccount equals: -10 * peso.! !
+
+!TransferNetTests methodsFor: 'tests' stamp: 'MS 6/16/2022 17:49:22'!
+test04AccountWithMultipleTransfersHasCorrectNetTransferValue
+
+	Transfer amount: 10 * peso from: anAccount to: anotherAccount .
+	Transfer amount: 20 * peso from: anotherAccount to: anAccount .
+
+	self assertTransferNetFor: anAccount equals: 10 * peso.! !
+
+!TransferNetTests methodsFor: 'tests' stamp: 'MS 6/16/2022 17:49:37'!
+test05TransferNetIgnoresDepositTransaction
+	
+	Deposit register: 400 * peso on: anAccount.
+	
+	self assertTransferNetFor: anAccount equals: 0 * peso.! !
+
+!TransferNetTests methodsFor: 'tests' stamp: 'MS 6/16/2022 17:49:54'!
+test06TransferNetIgnoresWithdrawTransaction
+
+	Withdraw register: 400 * peso on: anAccount.
+	
+	self assertTransferNetFor: anAccount equals: 0 * peso.! !
+
+!TransferNetTests methodsFor: 'tests' stamp: 'MS 6/16/2022 17:54:04'!
+test07PortfolioWithMultipleTransfersHasCorrectNetTransferValue
+	|  aPortfolio  |
 	
 	aPortfolio := Portfolio with: anAccount with: anotherAccount.
 	
 	Transfer amount: 10 * peso from: anAccount to: anotherAccount .
 	Transfer amount: 20 * peso from: anotherAccount to: externalAccount .
-	summary := TransferNet for: aPortfolio.
-	
-	self assert: -20 * peso equals: summary generate.! !
+
+	self assertTransferNetFor: aPortfolio equals: -20*peso ! !
 
 
 !classDefinition: #TransferTest category: 'ServiciosFinancieros-Solucion'!
@@ -749,7 +892,6 @@ accept: anAccountVisitor
 Account class
 	instanceVariableNames: ''!
 
-
 !Account class methodsFor: 'as yet unclassified' stamp: 'IS 6/16/2022 00:12:16'!
 named: aName
 	
@@ -832,23 +974,11 @@ addTransactionsTo: aCollectionOfTransactions
 accept: anAccountVisitor
 	^anAccountVisitor visitPortfolio: self! !
 
-!Portfolio methodsFor: 'visitor' stamp: 'IS 6/16/2022 01:28:57'!
-visitAccounts
-	^accounts collect: [ :anAccount | 
-		(anAccount accept: self) collect: [ :subAccount | '    ',subAccount]
-	]
-	! !
-
-!Portfolio methodsFor: 'visitor' stamp: 'IS 6/16/2022 01:31:44'!
+!Portfolio methodsFor: 'visitor' stamp: 'MS 6/16/2022 15:35:50'!
 visitAccountsWith: anAccountVisitor
- 	| names |
-	names := OrderedCollection new.
-	
-	accounts collect: [ :anAccount | 
-		names addAll: ((anAccount accept: anAccountVisitor) collect: [ :subAccount | '    ',subAccount])
-	].
+ 	accounts do: [ :anAccount | anAccount accept: anAccountVisitor 	].
 
-	^names
+
 	! !
 
 
@@ -1222,34 +1352,58 @@ register: aValue on: account
 
 !classDefinition: #PortfolioTreePrinter category: 'ServiciosFinancieros-Solucion'!
 Object subclass: #PortfolioTreePrinter
-	instanceVariableNames: 'portfolio'
+	instanceVariableNames: 'portfolio portfolioTree treeLevel'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!PortfolioTreePrinter methodsFor: 'initialization' stamp: 'IS 6/16/2022 01:21:51'!
-initializeWith: aPortfolio 
-	portfolio := aPortfolio.! !
+!PortfolioTreePrinter methodsFor: 'private - indentation' stamp: 'MS 6/16/2022 17:20:16'!
+currentIndent
+	| indent |
+	indent := ''.
+	treeLevel timesRepeat: [indent := indent append: '    '].
+	
+	^indent.! !
+
+!PortfolioTreePrinter methodsFor: 'private - indentation' stamp: 'MS 6/16/2022 17:20:22'!
+decreaseTreeLevel
+
+	^ treeLevel := treeLevel - 1! !
+
+!PortfolioTreePrinter methodsFor: 'private - indentation' stamp: 'MS 6/16/2022 17:20:28'!
+increaseTreeLevel
+
+	^ treeLevel := treeLevel + 1! !
 
 
-!PortfolioTreePrinter methodsFor: 'visits' stamp: 'IS 6/16/2022 01:30:30'!
+!PortfolioTreePrinter methodsFor: 'private - adding' stamp: 'MS 6/16/2022 17:21:06'!
+addAccountNameToPortfolioTree: anAccount
+
+	portfolioTree add: (self currentIndent append: anAccount name)! !
+
+
+!PortfolioTreePrinter methodsFor: 'initialization' stamp: 'MS 6/16/2022 17:19:43'!
+initializeWith: aPortfolioToBePrinted 
+	
+	portfolio := aPortfolioToBePrinted.
+	portfolioTree := OrderedCollection new.
+	treeLevel := 0.! !
+
+
+!PortfolioTreePrinter methodsFor: 'private - visits' stamp: 'MS 6/16/2022 17:23:51'!
 visitPortfolio: aPortfolio
-	| names |
-	names := OrderedCollection with: aPortfolio name.
-	
-	names addAll: (aPortfolio visitAccountsWith: self).
-	
-	^names! !
+	self subclassResponsibility.! !
 
-!PortfolioTreePrinter methodsFor: 'visits' stamp: 'IS 6/16/2022 01:22:30'!
+!PortfolioTreePrinter methodsFor: 'private - visits' stamp: 'MS 6/16/2022 17:24:08'!
 visitReceptiveAccount: aReceptiveAccount
-	^OrderedCollection with: aReceptiveAccount name! !
+	self subclassResponsibility.! !
 
 
-!PortfolioTreePrinter methodsFor: 'main protocol' stamp: 'IS 6/16/2022 01:22:05'!
-generate	
-	^portfolio accept: self.
-	! !
+!PortfolioTreePrinter methodsFor: 'main protocol' stamp: 'MS 6/16/2022 17:22:04'!
+generate
+	portfolio accept: self.
+	
+	^portfolioTree.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -1257,9 +1411,92 @@ generate
 PortfolioTreePrinter class
 	instanceVariableNames: ''!
 
-!PortfolioTreePrinter class methodsFor: 'instance creation' stamp: 'IS 6/16/2022 00:14:01'!
-with: aPortfolio 
-	^self new initializeWith: aPortfolio ! !
+!PortfolioTreePrinter class methodsFor: 'instance creation' stamp: 'MS 6/16/2022 17:19:17'!
+with: aPortfolioToBePrinted
+	^self new initializeWith: aPortfolioToBePrinted ! !
+
+
+!classDefinition: #PortfolioBriefTreePrinter category: 'ServiciosFinancieros-Solucion'!
+PortfolioTreePrinter subclass: #PortfolioBriefTreePrinter
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Solucion'!
+
+!PortfolioBriefTreePrinter methodsFor: 'visits' stamp: 'MS 6/16/2022 17:15:48'!
+visitPortfolio: aPortfolio
+
+	self addAccountNameToPortfolioTree: aPortfolio.
+
+	self increaseTreeLevel.
+	aPortfolio visitAccountsWith: self.
+	self decreaseTreeLevel.
+	! !
+
+!PortfolioBriefTreePrinter methodsFor: 'visits' stamp: 'MS 6/16/2022 17:15:48'!
+visitReceptiveAccount: aReceptiveAccount
+	self addAccountNameToPortfolioTree: aReceptiveAccount.
+
+
+	
+	! !
+
+
+!classDefinition: #PortfolioDetailedTreePrinter category: 'ServiciosFinancieros-Solucion'!
+PortfolioTreePrinter subclass: #PortfolioDetailedTreePrinter
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Solucion'!
+
+!PortfolioDetailedTreePrinter methodsFor: 'private - adding' stamp: 'MS 6/16/2022 17:15:35'!
+addAccountBalanceToPortfolioTree: aReceptiveAccount
+
+	^ portfolioTree add: (self currentIndent,'Balance = ' append: aReceptiveAccount balance asString)! !
+
+!PortfolioDetailedTreePrinter methodsFor: 'private - adding' stamp: 'MS 6/16/2022 17:15:59'!
+addDescriptionAsPortfolioTreeLine: aTransactionDescription ofTransaction: aTransaction
+
+	portfolioTree add: (self currentIndent append: (aTransactionDescription , aTransaction value asString)).! !
+
+
+!PortfolioDetailedTreePrinter methodsFor: 'visits' stamp: 'MS 6/16/2022 17:16:00'!
+visitDeposit: aDeposit
+	
+	self addDescriptionAsPortfolioTreeLine: 'Depósito por ' ofTransaction: aDeposit.! !
+
+!PortfolioDetailedTreePrinter methodsFor: 'visits' stamp: 'MS 6/16/2022 17:15:48'!
+visitPortfolio: aPortfolio
+	self addAccountNameToPortfolioTree: aPortfolio.
+	
+	self increaseTreeLevel.
+	aPortfolio visitAccountsWith: self.	
+	self addAccountBalanceToPortfolioTree: aPortfolio.
+	self decreaseTreeLevel.! !
+
+!PortfolioDetailedTreePrinter methodsFor: 'visits' stamp: 'MS 6/16/2022 17:15:48'!
+visitReceptiveAccount: aReceptiveAccount
+	self addAccountNameToPortfolioTree: aReceptiveAccount.
+	
+	self increaseTreeLevel.
+	aReceptiveAccount visitTransactionsWith: self.
+	self addAccountBalanceToPortfolioTree: aReceptiveAccount.
+	self decreaseTreeLevel.! !
+
+!PortfolioDetailedTreePrinter methodsFor: 'visits' stamp: 'MS 6/16/2022 17:15:59'!
+visitTransferDepositLeg: aTransferDepositLeg 
+	
+	self addDescriptionAsPortfolioTreeLine: 'Entrada por transferencia de ' ofTransaction: aTransferDepositLeg.! !
+
+!PortfolioDetailedTreePrinter methodsFor: 'visits' stamp: 'MS 6/16/2022 17:15:59'!
+visitTransferWithdrawLeg: aTransferWithdrawLeg 
+	
+	self addDescriptionAsPortfolioTreeLine: 'Salida por transferencia de ' ofTransaction: aTransferWithdrawLeg.! !
+
+!PortfolioDetailedTreePrinter methodsFor: 'visits' stamp: 'MS 6/16/2022 17:16:00'!
+visitWithdraw: aWithdraw
+	
+	self addDescriptionAsPortfolioTreeLine: 'Extracción por ' ofTransaction: aWithdraw.! !
 
 
 !classDefinition: #Report category: 'ServiciosFinancieros-Solucion'!
@@ -1333,24 +1570,24 @@ generate
 	^summary ! !
 
 
-!AccountSummary methodsFor: 'visits' stamp: 'IS 6/16/2022 00:07:00'!
+!AccountSummary methodsFor: 'visits' stamp: 'MS 6/16/2022 18:40:29'!
 visitDeposit: aDeposit
-	summary add: ('Depósito por ' append: aDeposit value asString).! !
+	summary add: ('Depósito por ', aDeposit value asString).! !
 
-!AccountSummary methodsFor: 'visits' stamp: 'IS 6/16/2022 00:07:06'!
+!AccountSummary methodsFor: 'visits' stamp: 'MS 6/16/2022 18:40:18'!
 visitTransferDepositLeg: aTransferDepositLeg
 	
-	summary add: ('Entrada por transferencia de ' append: aTransferDepositLeg value asString).! !
+	summary add: ('Entrada por transferencia de ', aTransferDepositLeg value asString).! !
 
-!AccountSummary methodsFor: 'visits' stamp: 'IS 6/16/2022 00:07:13'!
+!AccountSummary methodsFor: 'visits' stamp: 'MS 6/16/2022 18:40:22'!
 visitTransferWithdrawLeg: aTransferWithdrawLeg
 
-	summary add: ('Salida por transferencia de ' append: aTransferWithdrawLeg value asString).! !
+	summary add: ('Salida por transferencia de ', aTransferWithdrawLeg value asString).! !
 
-!AccountSummary methodsFor: 'visits' stamp: 'IS 6/16/2022 00:07:19'!
+!AccountSummary methodsFor: 'visits' stamp: 'MS 6/16/2022 18:40:26'!
 visitWithdraw: aWithdraw
 	
-	summary add: ('Extracción por ' append: aWithdraw value asString).! !
+	summary add: ('Extracción por ', aWithdraw value asString).! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
